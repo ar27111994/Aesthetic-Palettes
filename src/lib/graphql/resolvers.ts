@@ -1,5 +1,5 @@
 // GraphQL Resolvers
-import { Context } from "./types";
+import { Context } from "@lib/graphql/types";
 
 export const resolvers = {
   Query: {

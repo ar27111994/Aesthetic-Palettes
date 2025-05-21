@@ -14,7 +14,7 @@ export const LocalesContext = createContext<{
 }>({ language: "", availableLanguages: [] });
 
 export function LocalesProvider({ children }: { children: React.ReactNode }) {
-  let t = useTranslations("Header");
+  const t = useTranslations("Header");
   const router = useRouter();
   const [language, setLanguage] = useState("");
   const [availableLanguages, setAvailableLanguages] = useState(
