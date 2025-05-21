@@ -1,0 +1,252 @@
+{
+  "Accessibility": {
+    "colorSwatchLabel": "Color swatch {hex}",
+    "paletteCardAriaLabel": "{name} palette by {author}",
+    "buttonLoading": "Loading...",
+    "formErrors": {
+      "required": "This field is required",
+      "invalidEmail": "Please enter a valid email"
+    },
+    "title": "Accessibility First",
+    "description": "Built with WCAG compliance and screen reader support",
+    "learnMoreButton": "Learn About Accessibility Features"
+  },
+  "Breadcrumbs": {
+    "breadcrumbNavLabel": "Breadcrumb Navigation"
+  },
+  "ErrorBoundary": {
+    "errorBoundaryTitle": "Something went wrong",
+    "componentStackLabel": "Component Stack:",
+    "tryAgainButton": "Try Again"
+  },
+  "Header": {
+    "nav": {
+      "documentation": "Documentation",
+      "designDocs": "Design Documentation",
+      "roadmap": "Roadmap",
+      "generator": "Generator",
+      "explore": "Explore",
+      "community": "Community",
+      "guides": "Guides",
+      "analytics": "Analytics",
+      "api": "API",
+      "primaryNavLabel": "Primary Navigation"
+    },
+    "auth": {
+      "login": "Login",
+      "signup": "Sign Up",
+      "logout": "Logout",
+      "dashboard": "Dashboard",
+      "profile": "Profile",
+      "settings": "Settings",
+      "developer": "Developer Portal"
+    },
+    "language": {
+      "en": "English",
+      "es": "Spanish"
+    },
+    "userMenu": "User Menu",
+    "skipToMainContent": "Skip to main content",
+    "logoAlt": "Aesthetic Palettes Logo",
+    "siteName": "Aesthetic Palettes",
+    "toggleSearchBar": "Toggle search bar",
+    "searchPlaceholder": "Search palettes, colors, users...",
+    "searchLabel": "Search",
+    "switchLanguage": "Switch to {language}",
+    "languageSelection": "Select language",
+    "switchToDarkMode": "Switch to Dark Mode",
+    "switchToLightMode": "Switch to Light Mode",
+    "toggleMobileMenu": "Toggle mobile menu",
+    "mobileMenuTitle": "Menu",
+    "closeMobileMenu": "Close mobile menu",
+    "themeOptions": "Theme Options",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode"
+  },
+  "Footer": {
+    "section": {
+      "product": "Product",
+      "community": "Community",
+      "resources": "Resources",
+      "legal": "Legal"
+    },
+    "link": {
+      "about": "About",
+      "features": "Features",
+      "forum": "Forum",
+      "pricing": "Pricing",
+      "blog": "Blog",
+      "reportContent": "Report Content",
+      "featuredUsers": "Featured Users",
+      "help": "Help Center",
+      "tutorial": "Tutorial",
+      "accessibility": "Accessibility",
+      "apiDocs": "API Docs",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "cookies": "Cookie Policy",
+      "documentation": "Documentation",
+      "roadmap": "Roadmap",
+      "designDocs": "Design Documentation",
+      "developerPortal": "Developer Portal",
+      "statusPage": "Status Page",
+      "support": "Support",
+      "manageCookies": "Manage Cookies",
+      "licensing": "Licensing"
+    },
+    "copyright": "© {year} Aesthetic Palettes. All rights reserved.",
+    "twitter": "Follow us on Twitter",
+    "facebook": "Like us on Facebook",
+    "instagram": "Follow us on Instagram",
+    "youtube": "Follow us on YouTube",
+    "github": "Star us on GitHub",
+    "dribble": "Follow us on Dribbble",
+    "email": "Contact us via email"
+  },
+  "Forms": {
+    "requiredIndicator": "*",
+    "dropdownPlaceholder": "Select an option"
+  },
+  "Errors": {
+    "errorBoundaryTitle": "Something went wrong",
+    "componentStackLabel": "Component Stack:",
+    "tryAgainButton": "Try Again"
+  },
+  "Common": {
+    "loadingLabel": "Loading...",
+    "closeModalLabel": "Close modal",
+    "dismissNotificationLabel": "Dismiss notification",
+    "logoTitle": "Aesthetic Palettes Logo - Harmonic Stack",
+    "logoDescription": "Abstract stack of colored rectangles representing color palettes."
+  },
+  "ColorSwatch": {
+    "copyHexLabel": "Copy color {hexValue}",
+    "copySuccess": "Copied {format}: {value}",
+    "copyFormat": "Copy {format} value to clipboard",
+    "colorOptionsLabel": "Color options",
+    "viewDetails": "View Details"
+  },
+  "Slider": {
+    "thumbAriaLabel": "Slider handle {index}",
+    "currentValueLabel": "Current value"
+  },
+  "Pagination": {
+    "previousButtonMobile": "Previous",
+    "nextButtonMobile": "Next",
+    "showingResults": "Showing {startItem}-{endItem} of {totalItems} results",
+    "previousButtonAriaLabel": "Go to previous page",
+    "nextButtonAriaLabel": "Go to next page"
+  },
+  "HomePage": {
+    "palettePreviewPlaceholder": "Palette preview loading...",
+    "heroTitle": "Create & Explore Accessible, Beautiful Palettes.",
+    "heroSubtitle": "The super fast, complete, WCAG AAA compliant color palettes generator! Packed with AI power and advanced tools.",
+    "launchGeneratorButton": "Launch Generator",
+    "explorePalettesButton": "Explore Trending Palettes",
+    "menuButtonLabel": "Open Menu",
+    "logoAltText": "Aesthetic Palettes Logo",
+    "userProfileButtonLabel": "User profile",
+    "phoneButtonLabel": "Phone",
+    "messagesButtonLabel": "Messages",
+    "cameraButtonLabel": "Camera",
+    "generatorHint": "Press the <key>spacebar</key> key to generate color palettes!",
+    "featuresTitle": "Features",
+    "trendingTitle": "Trending Palettes",
+    "paletteCardPlaceholder": "Loading palette {number}...",
+    "viewMoreTrendingButton": "View More Trending Palettes"
+  },
+  "Features": {
+    "wcagTitle": "WCAG Compliance Checker",
+    "wcagDescription": "Automatic accessibility checks with WCAG 2.1 AA/AAA standards",
+    "aiTitle": "AI-Powered Suggestions",
+    "aiDescription": "Smart color recommendations using machine learning models",
+    "imageTitle": "Image Color Extraction",
+    "imageDescription": "Generate palettes from uploaded images using computer vision",
+    "collabTitle": "Real-Time Collaboration",
+    "collabDescription": "Share and edit palettes simultaneously with team members",
+    "savesTitle": "Unlimited Saves",
+    "savesDescription": "Cloud-synced storage for all your color schemes",
+    "costTitle": "Free Forever",
+    "costDescription": "Total freedom through self-hosted deployments. Completely open source. No hidden fees or premium tiers"
+  },
+  "PaletteGenerator": {
+    "generateButton": "Generate <key>(Space)</key>"
+  },
+  "Controls": {
+    "undo": "Undo last action",
+    "redo": "Redo last action",
+    "decreaseSize": "Decrease palette size",
+    "increaseSize": "Increase palette size",
+    "moreOptions": "More options",
+    "save": "Save palette",
+    "export": "Export palette",
+    "viewOptions": "View options",
+    "accessibilityTools": "Accessibility tools",
+    "generateFromImage": "Generate from Image...",
+    "generateWithAI": "Generate with AI...",
+    "applyHarmonyRule": "Apply Color Harmony Rule...",
+    "viewShadesTints": "View Shades/Tints...",
+    "createGradient": "Create Gradient...",
+    "copy": "Copy Value",
+    "verticalLayout": "Switch to Vertical Layout",
+    "horizontalLayout": "Switch to Horizontal Layout",
+    "fullView": "Switch to Full View",
+    "compactView": "Switch to Compact View",
+    "adjust": "Adjust Color",
+    "unlock": "Unlock Color",
+    "lock": "Lock Color",
+    "delete": "Delete Color"
+  },
+  "PaletteCard": {
+    "viewPaletteAriaLabel": "View palette details",
+    "likeCountAriaLabel": "{count} likes",
+    "viewCreatorProfileAriaLabel": "View profile of {creatorUsername}",
+    "creatorPrefix": "by",
+    "unlikePaletteAriaLabel": "Unlike this palette",
+    "likePaletteAriaLabel": "Like this palette",
+    "unsavePaletteAriaLabel": "Unsave this palette",
+    "savePaletteAriaLabel": "Save this palette",
+    "copyLinkAriaLabel": "Copy palette link"
+  },
+  "CookieConsent": {
+    "bannerAriaLabel": "Cookie Consent Banner",
+    "bannerMessage": "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",
+    "learnMoreLink": "Learn More",
+    "acceptAllButton": "Accept All",
+    "customizeButton": "Customize",
+    "modalTitle": "Cookie Preferences",
+    "modalDescription": "Manage your cookie settings. You can enable or disable different types of cookies below. Essential cookies cannot be disabled.",
+    "essentialCookiesLabel": "Essential Cookies (Required)",
+    "analyticsCookiesLabel": "Analytics Cookies",
+    "marketingCookiesLabel": "Marketing Cookies",
+    "savePreferencesButton": "Save Preferences",
+    "cancelButton": "Cancel",
+    "rejectButton": "Reject Non-essential Cookies"
+  },
+  "HowItWorks": {
+    "title": "How It Works",
+    "step1Title": "Generate or Explore",
+    "step1Description": "Start with AI suggestions or browse community creations",
+    "step2Title": "Refine & Adjust",
+    "step2Description": "Use advanced tools to perfect your color relationships",
+    "step3Title": "Export & Share",
+    "step3Description": "Download assets or collaborate with team members"
+  },
+  "CTA": {
+    "title": "Start Creating Today",
+    "description": "Sign up for a free account to save your palettes, collaborate with others, and access advanced features.",
+    "signUpButton": "Create Free Account"
+  },
+  "Testimonials": {
+    "title": "What Our Users Say",
+    "quote1": "Aesthetic Palettes revolutionized how I approach color in my designs. The accessibility checker is a lifesaver!",
+    "name1": "Alex Johnson",
+    "role1": "UI/UX Designer",
+    "quote2": "Finally, a palette tool that's both powerful and beautiful. The AI suggestions are surprisingly spot-on.",
+    "name2": "Maria Garcia",
+    "role2": "Frontend Developer",
+    "quote3": "As a student, the free tier is incredible. I can experiment and learn without any limitations.",
+    "name3": "Sam Chen",
+    "role3": "Design Student"
+  }
+}

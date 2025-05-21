@@ -1,0 +1,252 @@
+{
+  "Accessibility": {
+    "colorSwatchLabel": "Muestra de color {hex}",
+    "paletteCardAriaLabel": "Paleta {name} por {author}",
+    "buttonLoading": "Cargando...",
+    "formErrors": {
+      "required": "Este campo es obligatorio",
+      "invalidEmail": "Por favor ingrese un email válido"
+    },
+    "title": "Accesibilidad Primero",
+    "description": "Desarrollado con cumplimiento WCAG y soporte para lectores de pantalla",
+    "learnMoreButton": "Conozca las funciones de accesibilidad"
+  },
+  "Breadcrumbs": {
+    "breadcrumbNavLabel": "Navegación de Migas de Pan"
+  },
+  "ErrorBoundary": {
+    "errorBoundaryTitle": "Algo salió mal",
+    "componentStackLabel": "Pila de Componentes:",
+    "tryAgainButton": "Intentar de Nuevo"
+  },
+  "Header": {
+    "nav": {
+      "documentation": "Documentación",
+      "designDocs": "Documentación de Diseño",
+      "roadmap": "Hoja de Ruta",
+      "generator": "Generador",
+      "explore": "Explorar",
+      "community": "Comunidad",
+      "guides": "Guías",
+      "analytics": "Analíticas",
+      "api": "API",
+      "primaryNavLabel": "Navegación Principal"
+    },
+    "auth": {
+      "login": "Iniciar Sesión",
+      "signup": "Registrarse",
+      "logout": "Cerrar Sesión",
+      "dashboard": "Panel",
+      "profile": "Perfil",
+      "settings": "Configuración",
+      "developer": "Portal de Desarrolladores"
+    },
+    "language": {
+      "en": "Inglés",
+      "es": "Español"
+    },
+    "userMenu": "Menú de Usuario",
+    "skipToMainContent": "Saltar al contenido principal",
+    "logoAlt": "Logo de Aesthetic Palettes",
+    "siteName": "Aesthetic Palettes",
+    "toggleSearchBar": "Alternar barra de búsqueda",
+    "searchPlaceholder": "Buscar paletas, colores, usuarios...",
+    "searchLabel": "Buscar",
+    "switchLanguage": "Cambiar a {language}",
+    "languageSelection": "Seleccionar idioma",
+    "switchToDarkMode": "Cambiar a Modo Oscuro",
+    "switchToLightMode": "Cambiar a Modo Claro",
+    "toggleMobileMenu": "Alternar menú móvil",
+    "mobileMenuTitle": "Menú",
+    "closeMobileMenu": "Cerrar menú móvil",
+    "themeOptions": "Opciones de Tema",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode"
+  },
+  "Footer": {
+    "section": {
+      "product": "Producto",
+      "community": "Comunidad",
+      "resources": "Recursos",
+      "legal": "Legal"
+    },
+    "link": {
+      "about": "Acerca de",
+      "features": "Características",
+      "forum": "Foro",
+      "pricing": "Precios",
+      "blog": "Blog",
+      "reportContent": "Reportar Contenido",
+      "featuredUsers": "Usuarios Destacados",
+      "help": "Centro de Ayuda",
+      "tutorial": "Tutorial",
+      "accessibility": "Accesibilidad",
+      "apiDocs": "Documentación de la API",
+      "terms": "Términos de Servicio",
+      "privacy": "Política de Privacidad",
+      "cookies": "Política de Cookies",
+      "documentation": "Documentación",
+      "roadmap": "Hoja de Ruta",
+      "designDocs": "Documentación de Diseño",
+      "developerPortal": "Portal de Desarrolladores",
+      "statusPage": "Página de Estado",
+      "support": "Soporte",
+      "manageCookies": "Gestionar Cookies",
+      "licensing": "Licencia"
+    },
+    "copyright": "© {year} Aesthetic Palettes. Todos los derechos reservados.",
+    "twitter": "Síguenos en Twitter",
+    "facebook": "Danos Me Gusta en Facebook",
+    "instagram": "Síguenos en Instagram",
+    "youtube": "Síguenos en YouTube",
+    "github": "Dale una estrella en GitHub",
+    "dribble": "Síguenos en Dribbble",
+    "email": "Contáctanos por correo electrónico"
+  },
+  "Forms": {
+    "requiredIndicator": "*",
+    "dropdownPlaceholder": "Selecciona una opción"
+  },
+  "Errors": {
+    "errorBoundaryTitle": "Algo salió mal",
+    "componentStackLabel": "Pila de Componentes:",
+    "tryAgainButton": "Intentar de Nuevo"
+  },
+  "Common": {
+    "loadingLabel": "Cargando...",
+    "closeModalLabel": "Cerrar modal",
+    "dismissNotificationLabel": "Descartar notificación",
+    "logoTitle": "Logotipo de Paletas Estéticas - Harmonic Stack",
+    "logoDescription": "Pila abstracta de rectángulos de colores que representan paletas de colores."
+  },
+  "ColorSwatch": {
+    "copyHexLabel": "Copiar color {hexValue}",
+    "copySuccess": "Copiado {format}: {value}",
+    "copyFormat": "Copiar el valor de {format} al portapapeles",
+    "colorOptionsLabel": "Opciones de color",
+    "viewDetails": "Ver Detalles"
+  },
+  "Slider": {
+    "thumbAriaLabel": "Slider handle {index}",
+    "currentValueLabel": "Current value"
+  },
+  "Pagination": {
+    "previousButtonMobile": "Previous",
+    "nextButtonMobile": "Next",
+    "showingResults": "Showing {startItem}-{endItem} of {totalItems} results",
+    "previousButtonAriaLabel": "Go to previous page",
+    "nextButtonAriaLabel": "Go to next page"
+  },
+  "HomePage": {
+    "palettePreviewPlaceholder": "Cargando vista previa de la paleta...",
+    "heroTitle": "Crea y explora paletas de colores accesibles y atractivas.",
+    "heroSubtitle": "¡El generador de paletas de colores superrápido, completo y compatible con WCAG AAA! Equipado con inteligencia artificial y herramientas avanzadas.",
+    "launchGeneratorButton": "Iniciar generador",
+    "explorePalettesButton": "¡Explora las paletas de colores más populares!",
+    "menuButtonLabel": "Abrir menú",
+    "logoAltText": "Logo de Aesthetic Palettes",
+    "userProfileButtonLabel": "Perfil de usuario",
+    "phoneButtonLabel": "Teléfono",
+    "messagesButtonLabel": "Mensajes",
+    "cameraButtonLabel": "Cámara",
+    "generatorHint": "¡Presione la tecla de la <key>barra espaciadora</key> para generar paletas de colores!",
+    "featuresTitle": "Características",
+    "trendingTitle": "Paletas Populares",
+    "paletteCardPlaceholder": "Cargando paleta {number}...",
+    "viewMoreTrendingButton": "Ver Más Paletas Populares"
+  },
+  "Features": {
+    "wcagTitle": "Verificador de cumplimiento WCAG",
+    "wcagDescription": "Comprobaciones de accesibilidad automáticas con estándares WCAG 2.1 AA/AAA",
+    "aiTitle": "Sugerencias con IA",
+    "aiDescription": "Recomendaciones inteligentes usando modelos de aprendizaje automático",
+    "imageTitle": "Extracción de colores de imágenes",
+    "imageDescription": "Genera paletas desde imágenes subidas usando visión artificial",
+    "collabTitle": "Colaboración en tiempo real",
+    "collabDescription": "Comparte y edita paletas simultáneamente con tu equipo",
+    "savesTitle": "Guardados ilimitados",
+    "savesDescription": "Almacenamiento en la nube para todos tus esquemas de color",
+    "costTitle": "Gratis para siempre",
+    "costDescription": "Libertad total gracias a implementaciones autoalojadas. Código completamente abierto. Sin cargos ocultos ni niveles premium"
+  },
+  "PaletteGenerator": {
+    "generateButton": "Generar <key>(Espacio)</key>"
+  },
+  "Controls": {
+    "undo": "Deshacer última acción",
+    "redo": "Rehacer última acción",
+    "decreaseSize": "Disminuir tamaño de paleta",
+    "increaseSize": "Aumentar tamaño de paleta",
+    "moreOptions": "Más opciones",
+    "save": "Guardar paleta",
+    "export": "Exportar paleta",
+    "viewOptions": "Ver opciones",
+    "accessibilityTools": "Herramientas de accesibilidad",
+    "generateFromImage": "Generar desde Imagen...",
+    "generateWithAI": "Generar con IA...",
+    "applyHarmonyRule": "Aplicar Regla de Armonía de Color...",
+    "viewShadesTints": "Ver Sombras/Tintes...",
+    "createGradient": "Crear Gradiente...",
+    "copy": "Copiar Valor",
+    "verticalLayout": "Switch to Vertical Layout",
+    "horizontalLayout": "Switch to Horizontal Layout",
+    "fullView": "Switch to Full View",
+    "compactView": "Switch to Compact View",
+    "adjust": "Ajustar Color",
+    "unlock": "Desbloquear Color",
+    "lock": "Bloquear Color",
+    "delete": "Eliminar Color"
+  },
+  "PaletteCard": {
+    "viewPaletteAriaLabel": "Ver detalles de la paleta",
+    "likeCountAriaLabel": "{count} me gusta",
+    "viewCreatorProfileAriaLabel": "Ver perfil de {creatorUsername}",
+    "creatorPrefix": "por",
+    "unlikePaletteAriaLabel": "Quitar 'me gusta' a esta paleta",
+    "likePaletteAriaLabel": "Dar 'me gusta' a esta paleta",
+    "unsavePaletteAriaLabel": "Dejar de guardar esta paleta",
+    "savePaletteAriaLabel": "Guardar esta paleta",
+    "copyLinkAriaLabel": "Copiar enlace de la paleta"
+  },
+  "CookieConsent": {
+    "bannerAriaLabel": "Banner de Consentimiento de Cookies",
+    "bannerMessage": "Usamos cookies para mejorar tu experiencia. Al continuar visitando este sitio, aceptas nuestro uso de cookies.",
+    "learnMoreLink": "Saber Más",
+    "acceptAllButton": "Aceptar Todo",
+    "customizeButton": "Personalizar",
+    "modalTitle": "Preferencias de Cookies",
+    "modalDescription": "Gestiona tu configuración de cookies. Puedes habilitar o deshabilitar diferentes tipos de cookies a continuación. Las cookies esenciales no se pueden deshabilitar.",
+    "essentialCookiesLabel": "Cookies Esenciales (Requeridas)",
+    "analyticsCookiesLabel": "Cookies de Analítica",
+    "marketingCookiesLabel": "Cookies de Marketing",
+    "savePreferencesButton": "Guardar Preferencias",
+    "cancelButton": "Cancelar",
+    "rejectButton": "Rechazar Cookies No Esenciales"
+  },
+  "HowItWorks": {
+    "title": "Cómo Funciona",
+    "step1Title": "Generar o Explorar",
+    "step1Description": "Comienza con sugerencias de IA o explora creaciones comunitarias",
+    "step2Title": "Refinar y Ajustar",
+    "step2Description": "Usa herramientas avanzadas para perfeccionar tus combinaciones",
+    "step3Title": "Exportar y Compartir",
+    "step3Description": "Descarga recursos o colabora con tu equipo"
+  },
+  "Testimonials": {
+    "title": "Lo Que Dicen Nuestros Usuarios",
+    "quote1": "Aesthetic Palettes revolucionó mi forma de abordar el color en mis diseños. ¡El verificador de accesibilidad es un salvavidas!",
+    "name1": "Alex García",
+    "role1": "Diseñador/a UI/UX",
+    "quote2": "Finalmente, una herramienta de paletas que es potente y hermosa. Las sugerencias de IA son sorprendentemente acertadas.",
+    "name2": "Sofía Rodríguez",
+    "role2": "Desarrollador/a Frontend",
+    "quote3": "Como estudiante, el nivel gratuito es increíble. Puedo experimentar y aprender sin limitaciones.",
+    "name3": "Leo Martínez",
+    "role3": "Estudiante de Diseño"
+  },
+  "CTA": {
+    "title": "Comienza a Crear Hoy",
+    "description": "Regístrate gratis para guardar tus paletas, colaborar con otros y acceder a funciones avanzadas.",
+    "signUpButton": "Crear Cuenta Gratis"
+  }
+}

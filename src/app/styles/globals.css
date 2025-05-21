@@ -1,0 +1,314 @@
+@import "tailwindcss";
+
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/container-queries";
+
+@theme {
+  --color-primary-action: #005bac;
+  --color-primary-action-hover: #004c8c;
+  --color-background-page: #ffffff;
+  --color-background-subtle: #f5f5f5;
+  --color-border-divider: #e0e0e0;
+  --color-text-heading: #111111;
+  --color-text-body: #333333;
+  --color-text-secondary: #666666;
+  --color-disabled-control: #aaaaaa;
+  --color-disabled-bg: #e0e0e0;
+  --color-accent: #006666;
+  --color-feedback-success: #006400;
+  --color-feedback-error: #b30000;
+  --color-feedback-warning: #b87400;
+  --color-focus-indicator: #005bac;
+
+  --color-brand-accent-1: #6b7eff;
+  --color-brand-accent-2: #3ed0a6;
+  --color-brand-accent-3: #ffaf6b;
+  --color-text-body-stronger: #444444;
+  --color-border-strong: #c0c0c0;
+  --color-black: #000000;
+  --color-white: #ffffff; /* Explicit white, though background-page is often white */
+
+  /* New additions for Tailwind UI elements */
+  --color-background-dark-1: #1f2937; /* For gray-800 */
+  --color-background-dark-2: #111827; /* For gray-900 */
+  --color-background-overlay-light-alpha-80: rgba(
+    148,
+    163,
+    184,
+    0.8
+  ); /* For slate-400/80 */
+  --color-text-secondary-hover: #d1d5db; /* For gray-300 text hover */
+  --color-ring-offset-dark: #1f2937; /* For ring-offset-gray-800 */
+  --color-secondary-action: #4a5568; /* cool gray 700 */
+  --color-secondary-action-hover: #2d3748; /* cool gray 800 */
+  --color-tag-secondary-bg: var(
+    --color-secondary-action
+  ); /* Updated to use semantic variable */
+
+  /* RGB versions for opacity utilities */
+  --color-black-rgb: 0, 0, 0;
+  --color-primary-action-rgb: 0, 91, 172; /* #005bac */
+  --color-primary-action-hover-rgb: 0, 76, 140; /* #004c8c */
+  --color-accent-rgb: 0, 102, 102; /* #006666 */
+  --color-secondary-action-rgb: 74, 85, 104; /* #4A5568 */
+  --color-background-subtle-rgb: 245, 245, 245; /* #f5f5f5 */
+
+  /* Alpha utility colors (examples, expand as needed) */
+  --color-overlay-dark-alpha-10: rgba(var(--color-black-rgb), 0.1);
+  --color-overlay-dark-alpha-20: rgba(var(--color-black-rgb), 0.2);
+  --color-overlay-dark-alpha-30: rgba(var(--color-black-rgb), 0.3);
+  --color-overlay-dark-alpha-50: rgba(var(--color-black-rgb), 0.5);
+  --color-overlay-dark-alpha-60: rgba(var(--color-black-rgb), 0.6);
+  --color-overlay-dark-alpha-70: rgba(var(--color-black-rgb), 0.7);
+  --color-overlay-dark-alpha-80: rgba(var(--color-black-rgb), 0.8);
+
+  --color-primary-action-alpha-10: rgba(var(--color-primary-action-rgb), 0.1);
+  --color-primary-action-hover-alpha-10: rgba(
+    var(--color-primary-action-hover-rgb),
+    0.1
+  );
+  --color-primary-action-hover-alpha-20: rgba(
+    var(--color-primary-action-hover-rgb),
+    0.2
+  );
+  --color-accent-alpha-50: rgba(var(--color-accent-rgb), 0.5);
+
+  --color-feedback-success-rgb: 0, 100, 0; /* #006400 */
+  --color-feedback-error-rgb: 179, 0, 0; /* #b30000 */
+  --color-feedback-warning-rgb: 184, 116, 0; /* #b87400 */
+
+  --color-feedback-success-alpha-10: rgba(
+    var(--color-feedback-success-rgb),
+    0.1
+  );
+  --color-feedback-error-alpha-10: rgba(var(--color-feedback-error-rgb), 0.1);
+  --color-feedback-warning-alpha-10: rgba(
+    var(--color-feedback-warning-rgb),
+    0.1
+  );
+
+  --color-background-subtle-alpha-80: rgba(
+    var(--color-background-subtle-rgb),
+    0.8
+  );
+  --color-primary-action-alpha-20: rgba(var(--color-primary-action-rgb), 0.2);
+  --color-primary-action-alpha-50: rgba(var(--color-primary-action-rgb), 0.5);
+  --color-primary-action-alpha-80: rgba(var(--color-primary-action-rgb), 0.8);
+  --color-secondary-action-alpha-80: rgba(
+    var(--color-secondary-action-rgb),
+    0.8
+  );
+  --color-feedback-error-alpha-80: rgba(var(--color-feedback-error-rgb), 0.8);
+
+  --font-family-sans: "Inter", system-ui, sans-serif;
+
+  --font-weight-regular: 400;
+
+  --animation-color-cycle: colors 15s ease infinite;
+  --animation-fade-in: fadeIn 0.3s ease-in;
+  --animation-fade-up: fadeUp 0.3s ease-out;
+}
+
+@layer base {
+  html {
+    line-height: 1.5;
+  }
+
+  body {
+    @apply bg-background-page text-text-body antialiased;
+  }
+
+  dialog:modal {
+    @apply h-screen w-screen;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+  }
+  h2 {
+    font-size: 1.875rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
+  h4 {
+    font-size: 1.125rem;
+  }
+  h5 {
+    font-size: 1rem;
+  }
+  h6 {
+    font-size: 0.875rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.3;
+    font-weight: var(--font-weight-bold);
+  }
+
+  h1,
+  h2 {
+    font-weight: var(--font-weight-bold);
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--color-focus-indicator);
+    outline-offset: 2px;
+  }
+
+  button,
+  [role="button"] {
+    cursor: pointer;
+    font-weight: var(--font-weight-semibold);
+  }
+  button:disabled,
+  [role="button"]:disabled {
+    cursor: default;
+  }
+
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-results-button,
+  input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+  }
+}
+
+@keyframes colors {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes moveCircle1 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 0.2;
+  }
+  25% {
+    transform: translate(-15%, 10%) scale(1.05) rotate(15deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(-25%, 20%) scale(1.15) rotate(-10deg);
+    opacity: 0.6;
+  }
+  75% {
+    transform: translate(-10%, 5%) scale(1) rotate(5deg);
+    opacity: 0.3;
+  }
+}
+
+@keyframes moveCircle2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 0.2;
+  }
+  25% {
+    transform: translate(10%, -8%) scale(0.95) rotate(-12deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(20%, -15%) scale(0.85) rotate(8deg);
+    opacity: 0.6;
+  }
+  75% {
+    transform: translate(5%, -5%) scale(0.9) rotate(-5deg);
+    opacity: 0.3;
+  }
+}
+
+@keyframes scrollingY {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@layer utilities {
+  .gradient-pulse {
+    --color-base: inherit;
+    --from: inherit;
+    --to: inherit;
+    --tw-gradient-from: rgb(from var(--color-base) r g b / var(--from));
+    --tw-gradient-to: rgb(from var(--color-base) r g b / var(--to));
+    --tw-gradient-stops: var(
+      --tw-gradient-via-stops,
+      var(--tw-gradient-position),
+      var(--tw-gradient-from) var(--tw-gradient-from-position),
+      var(--tw-gradient-to) var(--tw-gradient-to-position)
+    );
+  }
+
+  .animate-fade-in {
+    will-change: opacity;
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  .animate-fade-up {
+    will-change: opacity, transform;
+    animation: fadeUp 0.5s ease-out forwards;
+  }
+  .animate-move-circle-1 {
+    will-change: transform, opacity;
+    animation: moveCircle1 25s ease-in-out infinite;
+  }
+  .animate-move-circle-2 {
+    will-change: transform, opacity;
+    animation: moveCircle2 30s ease-in-out infinite;
+  }
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+  .animate-scroll-y {
+    --delay: inherit;
+    will-change: transform;
+    animation: scrollingY var(--delay) linear infinite;
+
+    &:has(> *:hover) {
+      animation-play-state: paused;
+    }
+  }
+}
