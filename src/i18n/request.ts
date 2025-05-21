@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import { getUserLocale } from "@services/locale";
 import { getRequestConfig } from "next-intl/server";
 
@@ -9,8 +8,8 @@ export default getRequestConfig(async () => {
   try {
     messages = await getLocaleTranslations(locale);
     return { locale, messages };
-  } catch (_error) {
-    notFound();
+  } catch (error) {
+    throw new Error("Locale not found", { cause: error });
   }
 });
 
