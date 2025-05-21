@@ -1,10 +1,10 @@
 // GraphQL Resolvers
-import { Context } from "./types";
+import { Context } from "@lib/graphql/types";
 
 export const resolvers = {
   Query: {
     // User queries
-    me: async (_: any, __: any, { supabase, req }: Context) => {
+    me: async (_: any, __: any, { supabase }: Context) => {
       try {
         // Get the user from the session
         const {
@@ -189,7 +189,7 @@ export const resolvers = {
     createPalette: async (
       _: any,
       { input }: { input: any },
-      { supabase, req }: Context,
+      { supabase }: Context,
     ) => {
       try {
         // Get the user from the session
@@ -222,7 +222,7 @@ export const resolvers = {
     updatePalette: async (
       _: any,
       { input }: { input: any },
-      { supabase, req }: Context,
+      { supabase }: Context,
     ) => {
       try {
         // Get the user from the session
@@ -267,7 +267,7 @@ export const resolvers = {
     deletePalette: async (
       _: any,
       { id }: { id: string },
-      { supabase, req }: Context,
+      { supabase }: Context,
     ) => {
       try {
         // Get the user from the session
@@ -302,7 +302,7 @@ export const resolvers = {
     createCollection: async (
       _: any,
       { input }: { input: any },
-      { supabase, req }: Context,
+      { supabase }: Context,
     ) => {
       try {
         // Get the user from the session
@@ -331,7 +331,7 @@ export const resolvers = {
     updateCollection: async (
       _: any,
       { input }: { input: any },
-      { supabase, req }: Context,
+      { supabase }: Context,
     ) => {
       try {
         // Get the user from the session
@@ -370,7 +370,7 @@ export const resolvers = {
     deleteCollection: async (
       _: any,
       { id }: { id: string },
-      { supabase, req }: Context,
+      { supabase }: Context,
     ) => {
       try {
         // Get the user from the session

@@ -1,5 +1,6 @@
 // GraphQL Schema Definition
-import { gql } from "apollo-server-micro";
+import { gql } from "graphql-tag";
+// Note: If graphql-tag is not available, you can also use: import { gql } from "@apollo/server";
 
 export const typeDefs = gql`
   # User type definition
