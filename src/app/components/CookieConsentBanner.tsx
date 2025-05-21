@@ -170,7 +170,7 @@ const CookieConsentBanner: React.FC = () => {
                         </label>
                         <ToggleSwitch
                           enabled={true}
-                          onChange={(enabled) => {}}
+                          onChange={(_enabled) => {}}
                           label={t("analyticsCookiesLabel")}
                           aria-label={t("analyticsCookiesLabel")}
                           id="analytics-cookies"
@@ -187,7 +187,7 @@ const CookieConsentBanner: React.FC = () => {
                         </label>
                         <ToggleSwitch
                           enabled={false}
-                          onChange={(enabled) => {}}
+                          onChange={(_enabled) => {}}
                           label={t("marketingCookiesLabel")}
                           aria-label={t("marketingCookiesLabel")}
                           id="marketing-cookies"

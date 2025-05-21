@@ -251,8 +251,8 @@ function generateMonochromaticPalette({
   // This can be translated to LCH:
   const lchColors = chroma
     .scale([
-      baseColor.set("lch.l", MONOCHROMATIC_LCH_LIGHTNESS_MIN), // Keep hue and chroma, set L
-      baseColor.set("lch.l", MONOCHROMATIC_LCH_LIGHTNESS_MAX), // Keep hue and chroma, set L
+      colorAtMinLightness, // Keep hue and chroma, set L
+      colorAtMaxLightness, // Keep hue and chroma, set L
     ])
     .mode("lch")
     .colors(paletteSize);

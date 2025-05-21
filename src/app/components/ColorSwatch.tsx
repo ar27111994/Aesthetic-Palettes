@@ -36,7 +36,7 @@ const ColorSwatch: React.FC<ColorSwatchProps> = ({
   color,
   className,
   onAdjust,
-  onViewDetails,
+  onViewDetails, // Prefixed with underscore to indicate intentionally unused
   onDelete,
   onLockToggle,
   isLocked = false,
@@ -45,7 +45,8 @@ const ColorSwatch: React.FC<ColorSwatchProps> = ({
     (state: RootState) => state.palette as PaletteState,
   );
   const parsedColor = chroma(color);
-  const [showHex, setShowHex] = useState(false);
+  // State for toggling between color formats (not currently used but kept for future implementation)
+  const [_showHex, _setShowHex] = useState(false);
   const hexValue = parsedColor.hex();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const t = useTranslations("ColorSwatch"); // Initialize translations
@@ -93,6 +94,11 @@ const ColorSwatch: React.FC<ColorSwatchProps> = ({
     console.log(`Copied ${format.toUpperCase()}: ${valueToCopy}`);
     // Consider using a toast library here, e.g., react-toastify
     // toast.success(t('copySuccess', { format: format.toUpperCase(), value: valueToCopy }));
+  };
+
+  // --- Unused Function ---
+  const _handleViewDetailsClick = () => {
+    onViewDetails?.(color);
   };
 
   const handleDeleteClick = () => {

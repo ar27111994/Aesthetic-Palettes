@@ -68,7 +68,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   return (
     <div className={cn("w-full", className)}>
       <Listbox value={value} onChange={onChange} disabled={disabled}>
-        {({ open }) => (
+        {() => (
           <>
             <Label id={labelId} className={labelClasses}>
               {label}

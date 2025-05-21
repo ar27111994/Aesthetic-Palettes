@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
  */
 
 // Get all collections for the authenticated user
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   // Initialize Supabase client
   const supabase = await createClient();
 

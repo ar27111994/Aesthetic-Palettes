@@ -58,7 +58,7 @@ export function LocalesProvider({ children }: { children: React.ReactNode }) {
       isMounted = false;
       unsubscribe();
     };
-  }, []);
+  }, [router, t]); // Add router and t as dependencies
 
   return (
     <LocalesContext.Provider value={{ language, availableLanguages }}>

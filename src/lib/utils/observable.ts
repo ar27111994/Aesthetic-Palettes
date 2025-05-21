@@ -1,11 +1,11 @@
 export class Observable {
-  observers: Function[];
+  observers: Array<(data?: unknown) => void>;
 
   constructor() {
     this.observers = [];
   }
 
-  subscribe(func: Function): Function {
+  subscribe(func: (data?: unknown) => void): () => void {
     this.observers.push(func);
 
     return () => {
@@ -13,11 +13,11 @@ export class Observable {
     };
   }
 
-  unsubscribe(inputFunc: Function): void {
+  unsubscribe(inputFunc: (data?: unknown) => void): void {
     this.observers.filter((func) => func != inputFunc);
   }
 
-  notify(data?: any): void {
+  notify(data?: unknown): void {
     this.observers.forEach((func) => func(data));
   }
 }

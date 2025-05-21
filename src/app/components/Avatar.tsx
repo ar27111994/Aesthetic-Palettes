@@ -3,6 +3,7 @@
 import React from "react";
 import { cn } from "@utils/cn";
 import { Size } from "@typings/Size";
+import Image from "next/image";
 
 type Shape = "circle" | "square";
 
@@ -53,7 +54,7 @@ const Avatar: React.FC<AvatarProps> = ({
       )}
     >
       {src && !imageError ? (
-        <img
+        <Image
           src={src}
           alt={alt}
           className="h-full w-full object-cover"

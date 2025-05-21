@@ -34,9 +34,10 @@ const Modal: React.FC<ModalProps> = ({
   className,
   size = "md",
 }) => {
-  const titleId = providedTitleId || `modal-title-${React.useId()}`;
+  const uniqueId = React.useId(); // Generate ID once, not conditionally
+  const titleId = providedTitleId || `modal-title-${uniqueId}`;
   const descriptionId =
-    providedDescriptionId || `modal-description-${React.useId()}`;
+    providedDescriptionId || `modal-description-${uniqueId}`;
   const initialFocusRef = useRef(null); // Ref for initial focus inside the modal
   const t = useTranslations("Common"); // Initialize translations
 

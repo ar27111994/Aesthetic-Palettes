@@ -9,7 +9,7 @@ export default getRequestConfig(async () => {
   try {
     messages = await getLocaleTranslations(locale);
     return { locale, messages };
-  } catch (error) {
+  } catch (_error) {
     notFound();
   }
 });

@@ -80,7 +80,7 @@ const Header: React.FC = () => {
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
     }
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, isMobileMenuOpen]);
 
   // Focus the search input when it is expanded
   useEffect(() => {
