@@ -32,7 +32,9 @@ erDiagram
     COLLECTIONS ||--o{ COLLECTIONS_PALETTES : contains
 
     TAGS ||--o{ PALETTE_TAGS : applied_to
+```
 
+```
     USERS {
         UUID id PK "User ID (from Supabase Auth)"
         TEXT username UNIQUE "Unique username"

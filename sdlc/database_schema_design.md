@@ -35,7 +35,9 @@ erDiagram
     PALETTES ||--o{ TAGS : has
 
     COLLECTIONS ||--o{ COLLECTION_PALETTES : groups
+```
 
+```
     TAGS {
         string name PK
         timestamptz created_at
