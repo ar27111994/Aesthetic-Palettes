@@ -10,6 +10,7 @@
   [![Next.js](https://img.shields.io/badge/Next.js-15.3-black)](https://nextjs.org/)
   [![Supabase](https://img.shields.io/badge/Supabase-2.49-green)](https://supabase.io/)
   [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-38B2AC)](https://tailwindcss.com/)
+  ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/ar27111994/Aesthetic-Palettes?utm_source=oss&utm_medium=github&utm_campaign=ar27111994%2FAesthetic-Palettes&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 </div>
 
 ## ✨ Features
