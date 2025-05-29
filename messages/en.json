@@ -30,11 +30,14 @@
       "guides": "Guides",
       "analytics": "Analytics",
       "api": "API",
-      "primaryNavLabel": "Primary Navigation"
+      "primaryNavLabel": "Primary Navigation",
+      "mobileNavLabel": "Mobile Navigation"
     },
     "auth": {
       "login": "Login",
       "signup": "Sign Up",
+      "loginLabel": "User Login",
+      "signupLabel": "User Sign Up",
       "logout": "Logout",
       "dashboard": "Dashboard",
       "profile": "Profile",
@@ -61,7 +64,9 @@
     "closeMobileMenu": "Close mobile menu",
     "themeOptions": "Theme Options",
     "lightMode": "Light Mode",
-    "darkMode": "Dark Mode"
+    "darkMode": "Dark Mode",
+    "userAvatarAlt": "{username}'s User Account",
+    "userMenuLabel": "Open User Navigation Menu"
   },
   "Footer": {
     "section": {
@@ -105,7 +110,8 @@
   },
   "Forms": {
     "requiredIndicator": "*",
-    "dropdownPlaceholder": "Select an option"
+    "dropdownPlaceholder": "Select an option",
+    "optionDisabledTooltip": "This option is disabled"
   },
   "Errors": {
     "errorBoundaryTitle": "Something went wrong",
@@ -117,7 +123,14 @@
     "closeModalLabel": "Close modal",
     "dismissNotificationLabel": "Dismiss notification",
     "logoTitle": "Aesthetic Palettes Logo - Harmonic Stack",
-    "logoDescription": "Abstract stack of colored rectangles representing color palettes."
+    "logoDescription": "Abstract stack of colored rectangles representing color palettes.",
+    "avatarAltText": "User avatar",
+    "notification": {
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Info"
+    }
   },
   "ColorSwatch": {
     "copyHexLabel": "Copy color {hexValue}",

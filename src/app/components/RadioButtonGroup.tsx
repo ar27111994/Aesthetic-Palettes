@@ -1,147 +1,226 @@
 "use client";
 
-import React, { useId } from "react";
-import { useTranslations } from "next-intl"; // Import useTranslations
-import { Label, Radio, RadioGroup } from "@headlessui/react";
+import React from "react";
+import { useRadioGroupState } from "@react-stately/radio";
+import { useRadioGroup, useRadio } from "@react-aria/radio";
+import { VisuallyHidden } from "@react-aria/visually-hidden"; // Import useVisuallyHidden from React Aria
+import { useFocusRing } from "@react-aria/focus";
+import { mergeProps } from "@react-aria/utils";
 import { cn } from "@utils/cn";
+import { Tooltip } from "@components/Tooltip"; // Assuming Tooltip is in @components
 
-export interface RadioOption {
-  value: string | number;
-  label: string;
-  disabled?: boolean;
+// ACCESSIBILITY & UX: RadioGroupProps should clearly define the structure of 'options'.
+// Consider if 'legendTooltipContent' is always needed or optional.
+export interface RadioButtonOption {
+  value: string;
+  label: React.ReactNode;
+  /** Optional tooltip content for this specific radio option. */
+  tooltipContent?: React.ReactNode;
+  /** Optional: Additional props for the radio input itself, e.g., data-testid */
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  /** Optional: Additional props for the label wrapper of the radio option. */
+  labelProps?: React.HTMLAttributes<HTMLLabelElement>;
 }
 
-export interface RadioButtonGroupProps {
-  options: RadioOption[];
-  value?: string | number;
-  onChange: (value: string | number) => void;
-  legend: string; // The label for the entire group (fieldset legend)
-  hideLegend?: boolean;
-  disabled?: boolean;
-  error?: string;
+export interface RadioGroupProps {
+  name: string;
+  legend: React.ReactNode;
+  /** Optional tooltip content for the group's legend. */
+  legendTooltipContent?: React.ReactNode;
+  options: RadioButtonOption[];
+  selectedValue: string;
+  onChange: (value: string) => void;
   className?: string;
-  required?: boolean; // Applies to the group
+  /** Additional CSS classes for the fieldset element. */
+  fieldsetClassName?: string;
+  /** Additional CSS classes for the legend element. */
+  legendClassName?: string;
+  /** Additional CSS classes for each radio option's wrapper. */
+  optionClassName?: string;
+  /** Additional CSS classes for the radio input's visual representation (the circle). */
+  radioVisualClassName?: string;
+  /** Additional CSS classes for the radio label text. */
+  radioLabelClassName?: string;
+  /** Orientation of the radio buttons. Defaults to 'vertical'. */
+  orientation?: "vertical" | "horizontal";
 }
 
-const RadioButtonGroup: React.FC<RadioButtonGroupProps> = ({
-  options,
-  value,
-  onChange,
-  legend,
-  hideLegend = false,
-  disabled = false,
-  error,
-  className,
-  required,
+// RadioOption component using useRadio for individual radio buttons
+const RadioOption: React.FC<{
+  option: RadioButtonOption;
+  state: ReturnType<typeof useRadioGroupState>;
+  radioGroupProps: ReturnType<typeof useRadioGroup>["radioGroupProps"];
+  radioVisualClassName?: string;
+  radioLabelClassName?: string;
+  optionClassName?: string;
+}> = ({
+  option,
+  state,
+  // radioGroupProps,
+  radioVisualClassName,
+  radioLabelClassName,
+  optionClassName,
 }) => {
-  const generatedId = useId();
-  const groupId = `radio-group-${generatedId}`;
-  const legendId = `${groupId}-legend`;
-  const errorId = error ? `${groupId}-error` : undefined;
-  const t = useTranslations("Forms"); // Initialize translations
-
-  const legendClasses = cn(
-    "block text-sm font-medium mb-2", // Use text-body
+  const ref = React.useRef<HTMLInputElement>(null);
+  // Configure useRadio with only the props it expects (AriaRadioProps)
+  const { inputProps: hookInputProps, labelProps } = useRadio(
     {
-      "sr-only": hideLegend,
+      // ...radioGroupProps, // This line remains commented out as per previous fixes
+      // Removed spread of option.inputProps from here, as they are for the HTML input element itself
+      children: option.label,
+      value: option.value,
+      // If your RadioButtonOption can be disabled, you would pass it here, e.g.:
+      // isDisabled: option.isDisabled
     },
+    state,
+    ref,
+  );
+  const { focusProps, isFocusVisible } = useFocusRing();
+  const isSelected = state.selectedValue === option.value;
+
+  const radioContent = (
+    <label
+      {...mergeProps(labelProps, option.labelProps)}
+      className={cn(
+        "flex cursor-pointer items-center gap-x-2", // Ensure sufficient touch target size (WCAG 2.5.5)
+        // RESPONSIVE DESIGN: Adjust gap/padding for smaller screens if necessary.
+        "group", // For styling based on group state if needed
+        optionClassName,
+      )}
+    >
+      <VisuallyHidden>
+        {/* Merge inputProps from useRadio (now hookInputProps), focusProps, and any custom option.inputProps */}
+        <input
+          {...mergeProps(hookInputProps, focusProps, option.inputProps || {})}
+          ref={ref}
+        />
+      </VisuallyHidden>
+      {/* CUSTOMIZABLE VISUALS: Ensure these classes allow for easy theming and contrast adjustments. */}
+      {/* WCAG CONTRAST (AA & AAA): Critical for the radio button's visual states (checked/unchecked, focused). */}
+      <div
+        className={cn(
+          "border-border-divider flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors duration-150 ease-in-out",
+          // PERFORMANCE: CSS transitions are generally performant. Avoid complex JS animations for state changes.
+          {
+            "border-primary-action bg-primary-action": isSelected,
+            "bg-background-subtle group-hover:border-primary-action-hover":
+              !isSelected, // Use appropriate hover state colors
+            "ring-focus ring-offset-focus-indicator ring-2 ring-offset-2":
+              isFocusVisible,
+          }, // Consistent focus indicator
+          radioVisualClassName,
+        )}
+        aria-hidden="true"
+      >
+        {state.selectedValue === option.value && (
+          <div className="bg-background-page h-2 w-2 rounded-full" /> // Inner dot for selected state
+        )}
+      </div>
+      <span className={cn("text-text-body text-sm", radioLabelClassName)}>
+        {option.label}
+      </span>
+    </label>
+  );
+
+  if (option.tooltipContent) {
+    return (
+      <Tooltip content={option.tooltipContent} side="top" sideOffset={4}>
+        {radioContent}
+      </Tooltip>
+    );
+  }
+  return radioContent;
+};
+
+const RadioButtonGroup: React.FC<RadioGroupProps> = ({
+  name,
+  legend,
+  legendTooltipContent,
+  options,
+  selectedValue,
+  onChange,
+  className,
+  fieldsetClassName,
+  legendClassName,
+  optionClassName,
+  radioVisualClassName,
+  radioLabelClassName,
+  orientation = "vertical",
+}) => {
+  // ACCESSIBILITY: useRadioGroupState manages selection and focus state.
+  const state = useRadioGroupState({
+    name,
+    value: selectedValue,
+    onChange,
+    orientation,
+    // label: legend, // React Aria uses this for aria-label on the group if no visible label is present via aria-labelledby
+  });
+
+  // ACCESSIBILITY: useRadioGroup provides ARIA props for the group.
+  // SEO: The <fieldset> and <legend> are semantically correct for grouping radio buttons.
+  const { radioGroupProps, labelProps: groupLabelProps } = useRadioGroup(
+    {
+      name,
+      orientation,
+      "aria-label": typeof legend === "string" ? legend : name,
+    }, // Provide a string label for aria-label
+    state,
+  );
+
+  const legendContent = (
+    <legend
+      {...groupLabelProps}
+      className={cn(
+        "text-text-heading mb-2 block text-sm font-medium", // WCAG CONTRAST: Ensure this text meets contrast requirements.
+        legendClassName,
+      )}
+    >
+      {legend}
+    </legend>
   );
 
   return (
+    // NEXT.JS PPR: This component is interactive, so it's a client component ("use client" is at the top).
+    // No specific PPR optimizations needed beyond standard React best practices.
     <fieldset
-      className={cn("w-full", className)}
-      aria-labelledby={legendId}
-      aria-required={required}
-      aria-invalid={!!error}
-      aria-describedby={errorId}
+      {...radioGroupProps}
+      className={cn(
+        "border-border-divider rounded-md border p-4", // Default styling, consider if border is always desired.
+        // RESPONSIVE DESIGN: Padding and layout should adapt to screen sizes.
+        className,
+        fieldsetClassName,
+      )}
     >
-      <legend id={legendId} className={legendClasses}>
-        {legend}
-        {required && (
-          <span className="text-feedback-error ml-1">
-            {t("requiredIndicator")}
-          </span>
+      {legendTooltipContent ? (
+        <Tooltip content={legendTooltipContent} side="top" sideOffset={4}>
+          {legendContent}
+        </Tooltip>
+      ) : (
+        legendContent
+      )}
+      <div
+        className={cn(
+          "flex",
+          {
+            "flex-col space-y-2": orientation === "vertical", // Vertical layout
+            "flex-row flex-wrap items-center gap-x-4 gap-y-2":
+              orientation === "horizontal",
+          }, // Horizontal layout with wrapping
+          // RESPONSIVE DESIGN: Ensure 'gap' and 'flex-wrap' behave well on small screens.
         )}
-        {/* Use feedback-error */}
-      </legend>
-      <RadioGroup
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        className="space-y-2"
       >
         {options.map((option) => (
-          <Radio
+          <RadioOption
             key={option.value}
-            value={option.value}
-            disabled={option.disabled || disabled}
-            className={({ focus, checked, disabled: itemDisabled }) =>
-              cn(
-                "relative flex cursor-pointer rounded-lg border px-5 py-4 shadow-md focus:outline-none", // Added border
-                {
-                  "border-border-divider": !focus, // Use border-divider
-                  "ring-focus-indicator ring-offset-background-page ring-2 ring-offset-2":
-                    focus, // Use focus-indicator, background-page
-                  "bg-primary-action border-primary-action text-background-page":
-                    checked, // Use primary-action
-                  "bg-background-page text-text-body": !checked, // Use background-page, text-body
-                  "bg-disabled-bg text-disabled-control border-border-divider cursor-not-allowed":
-                    itemDisabled, // Use disabled colors
-                  "hover:bg-background-subtle": !itemDisabled, // Use background-subtle
-                },
-              )
-            }
-          >
-            {({ checked, disabled: itemDisabled }) => (
-              <div className="flex w-full items-center justify-between">
-                <div className="flex items-center">
-                  <div className="text-sm">
-                    <Label
-                      as="p"
-                      className={cn("font-medium", {
-                        // Keep font-medium
-                        "text-background-page": checked, // Use white for checked label
-                        "text-text-heading": !checked, // Use text-heading for unchecked label
-                        "text-disabled-control": itemDisabled, // Use disabled-control for disabled label
-                      })}
-                    >
-                      {option.label}
-                    </Label>
-                    {/* Optional: Add description here if needed */}
-                  </div>
-                </div>
-                {checked && (
-                  <div className="text-background-page shrink-0">
-                    {/* Checkmark Icon */}
-                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none">
-                      <circle
-                        className="fill-background-page"
-                        cx={12}
-                        cy={12}
-                        r={12}
-                        fillOpacity={0.2}
-                      />
-                      <path
-                        className="stroke-background-page"
-                        d="M7 13l3 3 7-7"
-                        strokeWidth={1.5}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                )}
-              </div>
-            )}
-          </Radio>
+            option={option}
+            state={state}
+            radioGroupProps={radioGroupProps} // Pass the group props, not individual input props here
+            radioVisualClassName={radioVisualClassName}
+            radioLabelClassName={radioLabelClassName}
+            optionClassName={optionClassName}
+          />
         ))}
-      </RadioGroup>
-      {error && (
-        <p id={errorId} className="text-feedback-error mt-2 text-sm">
-          {/* Use feedback-error */}
-          {error}
-        </p>
-      )}
+      </div>
     </fieldset>
   );
 };

@@ -1,56 +1,87 @@
-import React from "react";
+import React, { useRef } from "react";
 import { cn } from "@utils/cn";
 import { Size } from "@typings/Size";
+import { useButton, mergeProps } from "react-aria";
+import { AriaButtonProps } from "@react-types/button";
+import { Tooltip } from "@components/Tooltip"; // Assuming Tooltip path
 
 type Variant = "default" | "primary" | "secondary" | "destructive" | "outline";
 
-export interface TagProps {
-  children: React.ReactNode;
+export interface TagProps extends Omit<AriaButtonProps<"button">, "children"> {
+  children: React.ReactNode; // Make children explicitly required
   className?: string;
   variant?: Variant;
   size?: Size;
+  tooltip?: string | React.ReactNode;
+  tooltipSide?: "top" | "right" | "bottom" | "left";
 }
 
-const Tag: React.FC<TagProps> = ({
-  children,
-  className,
-  variant = "default",
-  size = "md",
-}) => {
+const Tag: React.FC<TagProps> = (props) => {
+  const {
+    children,
+    className,
+    variant = "default",
+    size = "md",
+    tooltip,
+    tooltipSide,
+    ...ariaButtonCompatibleProps // Contains onPress, isDisabled, aria-label, id, etc.
+  } = props;
+
+  const ref = useRef<HTMLButtonElement>(null);
+  // Pass props that AriaButtonProps expects, plus any other valid HTML button attributes
+  const { buttonProps, isPressed } = useButton(
+    ariaButtonCompatibleProps as AriaButtonProps<"button">, // Cast to ensure type compatibility for useButton
+    ref,
+  );
+
   const baseClasses =
     "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold motion-reduce:transition-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus-indicator focus-visible:ring-offset-2"; // Use focus-indicator
 
-  const variantClasses = {
+  // Updated variant classes for WCAG AA contrast and design system token usage
+  const variantClasses: Record<Variant, string> = {
     default:
-      "border-transparent bg-background-subtle text-text-secondary hover:bg-background-subtle/80", // Use design system tokens
+      "border-transparent bg-background-subtle text-text-body hover:bg-background-subtle-alpha-80", // Ensure text-text-body provides enough contrast
     primary:
-      "border-transparent bg-primary-action text-background-page hover:bg-primary-action/80", // Use design system tokens
-    // Assuming secondary maps to a subtle variant
+      "border-transparent bg-primary-action text-background-page hover:bg-primary-action-alpha-80", // text-background-page for high contrast on primary
     secondary:
-      "border-transparent bg-secondary-action text-background-page hover:bg-secondary-action/80", // Use design system tokens (adjust if needed)
+      "border-transparent bg-secondary-action text-background-page hover:bg-secondary-action-alpha-80", // Darker green for contrast
     destructive:
-      "border-transparent bg-feedback-error text-background-page hover:bg-feedback-error/80", // Use design system tokens
-    outline: " border-border-divider", // Use design system tokens
+      "border-transparent bg-feedback-error text-background-page hover:bg-feedback-error-alpha-80", // Darker red for contrast
+    outline: "border-border-divider text-text-body hover:bg-background-subtle", // Explicit text color and hover for outline
   };
 
-  const sizeClasses = {
+  const sizeClasses: Record<Size, string> = {
     sm: "px-2 py-0.5 text-xs",
     md: "px-2.5 py-0.5 text-xs",
     lg: "px-3 py-1 text-sm",
   };
 
-  return (
-    <span
+  const tagElement = (
+    <button
+      {...mergeProps(buttonProps, ariaButtonCompatibleProps)} // Merge props from useButton with other passed-in HTML attributes
+      ref={ref}
       className={cn(
         baseClasses,
         variantClasses[variant],
         sizeClasses[size],
+        // Example: Apply style when pressed, if desired. useButton provides `isPressed`.
+        { "scale-95 opacity-80": isPressed },
         className,
       )}
     >
       {children}
-    </span>
+    </button>
   );
+
+  if (tooltip) {
+    return (
+      <Tooltip content={tooltip} side={tooltipSide}>
+        {tagElement}
+      </Tooltip>
+    );
+  }
+
+  return tagElement;
 };
 
 export { Tag };

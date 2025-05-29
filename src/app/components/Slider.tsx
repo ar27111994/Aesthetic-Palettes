@@ -49,7 +49,7 @@ const Slider = forwardRef<
     };
 
     const labelClasses = cn(
-      "block text-sm font-medium mb-1", // Use text-body
+      "block text-sm font-medium text-text-body mb-1", // Use text-text-body (e.g., maps to #333333 for high contrast)
       {
         "sr-only": hideLabel,
       },

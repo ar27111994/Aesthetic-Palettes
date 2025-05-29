@@ -4,6 +4,7 @@ import React from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { cn } from "@utils/cn";
 import { useTranslations } from "next-intl"; // Import useTranslations
+import { Button } from "@components/Button"; // Import the shared Button component
 
 export interface PaginationControlsProps {
   currentPage: number;
@@ -12,7 +13,10 @@ export interface PaginationControlsProps {
   itemsPerPage: number;
   totalItems: number;
   className?: string;
+  siblingCount?: number; // Number of page buttons to show around the current page
 }
+
+const DOTS = "...";
 
 const PaginationControls: React.FC<PaginationControlsProps> = ({
   currentPage,
@@ -21,6 +25,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   itemsPerPage,
   totalItems,
   className,
+  siblingCount = 1, // Default to 1 sibling page button on each side
 }) => {
   const t = useTranslations("Pagination"); // Initialize translations
 
@@ -43,8 +48,54 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-  const buttonBaseClasses =
-    "relative inline-flex items-center rounded-md border border-border-divider bg-background-page px-2 py-2 text-sm font-medium text-text-secondary hover:bg-background-subtle focus:z-20 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-indicator disabled:text-disabled-control disabled:bg-disabled-bg disabled:cursor-not-allowed"; // Use design system colors and focus
+  // Helper function to generate page numbers with ellipses
+  const generatePageNumbers = () => {
+    const totalPageNumbers = siblingCount + 5; // siblingCount + firstPage + lastPage + currentPage + 2*DOTS
+
+    // Case 1: If the number of pages is less than the page numbers we want to show in our paginationComponent
+    if (totalPageNumbers >= totalPages) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+
+    const shouldShowLeftDots = leftSiblingIndex > 2;
+    const shouldShowRightDots = rightSiblingIndex < totalPages - 2;
+
+    const firstPageIndex = 1;
+    const lastPageIndex = totalPages;
+
+    if (!shouldShowLeftDots && shouldShowRightDots) {
+      let leftItemCount = 3 + 2 * siblingCount;
+      let leftRange = Array.from({ length: leftItemCount }, (_, i) => i + 1);
+      return [...leftRange, DOTS, lastPageIndex];
+    }
+
+    if (shouldShowLeftDots && !shouldShowRightDots) {
+      let rightItemCount = 3 + 2 * siblingCount;
+      let rightRange = Array.from(
+        { length: rightItemCount },
+        (_, i) => totalPages - rightItemCount + i + 1,
+      );
+      return [firstPageIndex, DOTS, ...rightRange];
+    }
+
+    if (shouldShowLeftDots && shouldShowRightDots) {
+      let middleRange = Array.from(
+        { length: rightSiblingIndex - leftSiblingIndex + 1 },
+        (_, i) => leftSiblingIndex + i,
+      );
+      return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
+    }
+    // Should not happen, but as a fallback
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  };
+
+  const pageNumbers = generatePageNumbers();
+
+  const currentPageClasses =
+    "border-primary-action bg-primary-action/10 text-primary-action z-10 focus:outline-none"; // Ensure Button's focus doesn't override this if needed
 
   return (
     <div
@@ -52,66 +103,101 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         "border-border-divider bg-background-page flex items-center justify-between border-t px-4 py-3 sm:px-6", // Use design system colors
         className,
       )}
-      aria-label="Pagination"
+      aria-label={t("paginationRootAriaLabel")}
     >
-      {/* Mobile View */}
+      {/* Mobile View - Using Button for consistency */}
       <div className="flex flex-1 justify-between sm:hidden">
-        <button
+        <Button
           onClick={handlePrevious}
           disabled={currentPage === 1}
-          className="border-border-divider bg-background-page hover:bg-background-subtle disabled:text-disabled-control disabled:bg-disabled-bg focus-visible:outline-focus-indicator relative inline-flex items-center rounded-md border px-4 py-2 text-sm font-medium focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed" // Use design system colors and focus
+          variant="outline" // Using Button's variant
+          size="default" // Using Button's size, px-4 py-2 matches pageButtonClasses
+          className="disabled:cursor-not-allowed" // Keep specific disabled style if Button's default is not enough
         >
-          {t("previousButtonMobile")} {/* Use translation key */}
-        </button>
-        <button
+          {t("previousButtonMobile")}
+        </Button>
+        <Button
           onClick={handleNext}
           disabled={currentPage === totalPages}
-          className="border-border-divider bg-background-page hover:bg-background-subtle disabled:text-disabled-control disabled:bg-disabled-bg focus-visible:outline-focus-indicator relative ml-3 inline-flex items-center rounded-md border px-4 py-2 text-sm font-medium focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed" // Use design system colors and focus
+          variant="outline"
+          size="default"
+          className="ml-3 disabled:cursor-not-allowed"
         >
-          {t("nextButtonMobile")} {/* Use translation key */}
-        </button>
+          {t("nextButtonMobile")}
+        </Button>
       </div>
 
       {/* Desktop View */}
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm">
-            {/* Use text-body */}
+          <p className="text-text-body text-sm">
+            {/* Use text-body from design system */}
             {t("showingResults", { startItem, endItem, totalItems })}
-            {/* Showing <span className="font-medium">{startItem}</span> to
-            <span className="font-medium">{endItem}</span> of
-            <span className="font-medium">{totalItems}</span> results */}
           </p>
         </div>
         <div>
           <nav
             className="isolate inline-flex -space-x-px rounded-md shadow-sm"
-            aria-label="Pagination"
+            aria-label={t("paginationNavAriaLabel")}
           >
-            <button
+            <Button
               onClick={handlePrevious}
               disabled={currentPage === 1}
-              className={cn(buttonBaseClasses, "rounded-l-md")}
-              aria-label={t("previousButtonAriaLabel")} // Use translation key
+              variant="outline"
+              size="sm" // px-2 py-2 matches buttonBaseClasses for icons
+              className="rounded-l-md"
+              aria-label={t("previousButtonAriaLabel")} // Retained for clarity
+              tooltipContent={t("previousButtonAriaLabel")}
             >
               <FiChevronLeft className="h-5 w-5" aria-hidden="true" />
-            </button>
-            {/* Current page indicator (optional, can add page numbers later) */}
-            <span
-              aria-current="page"
-              className="border-primary-action bg-primary-action/10 text-primary-action focus-visible:outline-focus-indicator relative z-10 inline-flex items-center border px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2" // Use primary-action and focus
-            >
-              {currentPage}
-            </span>
-            {/* Add more page numbers here if needed */}
-            <button
+            </Button>
+
+            {pageNumbers.map((page, index) => {
+              if (page === DOTS) {
+                return (
+                  <span
+                    key={`${page}-${index}`}
+                    className="border-border-divider bg-background-page text-text-secondary relative inline-flex items-center border px-4 py-2 text-sm font-medium"
+                  >
+                    {DOTS}
+                  </span>
+                );
+              }
+              const isCurrent = page === currentPage;
+              return (
+                <Button
+                  key={page}
+                  onClick={() => onPageChange(page as number)}
+                  disabled={isCurrent}
+                  variant="outline"
+                  size="default" // px-4 py-2 matches pageButtonClasses
+                  className={cn(
+                    { [currentPageClasses]: isCurrent },
+                    "disabled:cursor-not-allowed", // Keep specific disabled style
+                    // Remove rounded-md if it's part of a group, Button.tsx adds rounded-md by default
+                    // For first/last visible page button in sequence, apply rounded-l-md/rounded-r-md if not prev/next
+                    // This logic might be complex to add here, Button.tsx default rounding might be acceptable
+                  )}
+                  aria-label={t("goToPageAriaLabel", { pageNumber: page })}
+                  aria-current={isCurrent ? "page" : undefined}
+                  tooltipContent={t("goToPageAriaLabel", { pageNumber: page })}
+                >
+                  {page}
+                </Button>
+              );
+            })}
+
+            <Button
               onClick={handleNext}
               disabled={currentPage === totalPages}
-              className={cn(buttonBaseClasses, "rounded-r-md")}
-              aria-label={t("nextButtonAriaLabel")} // Use translation key
+              variant="outline"
+              size="sm" // px-2 py-2 matches buttonBaseClasses for icons
+              className="rounded-r-md"
+              aria-label={t("nextButtonAriaLabel")}
+              tooltipContent={t("nextButtonAriaLabel")}
             >
               <FiChevronRight className="h-5 w-5" aria-hidden="true" />
-            </button>
+            </Button>
           </nav>
         </div>
       </div>

@@ -12,23 +12,27 @@ import { FiX } from "react-icons/fi";
 import { cn } from "@utils/cn";
 import { SizeVariant } from "@typings/Size";
 import { useTranslations } from "next-intl"; // Import useTranslations
+import { Button } from "@components/Button";
 
 export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  footer?: React.ReactNode; // Optional footer content
   titleId?: string;
   descriptionId?: string;
   className?: string;
   size?: SizeVariant;
 }
 
-const Modal: React.FC<ModalProps> = ({
+const ModalComponent: React.FC<ModalProps> = ({
+  // Renamed for React.memo
   isOpen,
   onClose,
   title,
   children,
+  footer,
   titleId: providedTitleId,
   descriptionId: providedDescriptionId,
   className,
@@ -96,7 +100,7 @@ const Modal: React.FC<ModalProps> = ({
                 aria-labelledby={titleId}
                 aria-describedby={descriptionId} // Describe content if applicable
               >
-                <div className="flex items-start justify-between">
+                <div className="flex items-center justify-between">
                   <DialogTitle
                     as="h3"
                     id={titleId}
@@ -104,27 +108,29 @@ const Modal: React.FC<ModalProps> = ({
                   >
                     {title}
                   </DialogTitle>
-                  <button
-                    type="button"
-                    className="bg-background-page text-text-secondary hover:text-text-body focus-visible:ring-focus-indicator ml-4 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none" // Use design system colors and focus
+                  <Button
+                    tooltipContent={t("closeModalLabel")}
+                    variant="ghost"
+                    size="icon"
+                    className="ml-4"
                     onClick={onClose}
-                    aria-label={t("closeModalLabel")} // Use translation key
                   >
                     <FiX className="h-6 w-6" aria-hidden="true" />
-                  </button>
+                  </Button>
                 </div>
 
                 <div id={descriptionId} className="mt-4">
-                  {/* Add a ref to a focusable element if possible */}
-                  {/* <button ref={initialFocusRef} className="sr-only">Focus Trap</button> */}
+                  {/* Add a ref to a focusable element if possible, e.g., to the first interactive element in children for initialFocus. */}
+                  {/* TODO: Ensure content passed as children meets WCAG AA/AAA contrast requirements against the modal background. */}
                   {children}
                 </div>
 
-                {/* Optional: Add Footer with actions here */}
-                {/* <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                  <button type="button" className="...">Action 1</button>
-                  <button type="button" onClick={onClose} className="...">Cancel</button>
-                </div> */}
+                {/* Render footer if provided */}
+                {footer && (
+                  <div className="border-border-neutral mt-5 border-t pt-4 sm:mt-6">
+                    {footer}
+                  </div>
+                )}
               </DialogPanel>
             </TransitionChild>
           </div>
@@ -134,4 +140,5 @@ const Modal: React.FC<ModalProps> = ({
   );
 };
 
+const Modal = React.memo(ModalComponent);
 export { Modal };

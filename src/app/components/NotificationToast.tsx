@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment } from "react";
 import { Transition } from "@headlessui/react";
 import {
   FiCheckCircle,
@@ -11,16 +11,21 @@ import {
 } from "react-icons/fi";
 import { cn } from "@utils/cn";
 import { useTranslations } from "next-intl"; // Import useTranslations
+import { Button } from "@components/Button";
+import hotToast, {
+  Renderable,
+  Toast,
+  resolveValue,
+  type Toast as RHTToast,
+} from "react-hot-toast"; // Import react-hot-toast
 
 export type NotificationType = "success" | "error" | "info" | "warning";
 
 export interface NotificationToastProps {
-  id: string | number;
+  toast: RHTToast; // react-hot-toast object
   type: NotificationType;
   title: string;
-  message?: string;
-  duration?: number; // Duration in ms, 0 or undefined means persistent
-  onDismiss: (id: string | number) => void;
+  message?: Renderable;
   className?: string;
 }
 
@@ -46,37 +51,44 @@ const iconClasses: Record<NotificationType, string> = {
 };
 
 const NotificationToast: React.FC<NotificationToastProps> = ({
-  id,
+  toast, // Destructure toast object
   type,
   title,
   message,
-  duration,
-  onDismiss,
   className,
 }) => {
-  const [show, setShow] = useState(true);
   const Icon = icons[type];
   const t = useTranslations("Common"); // Initialize translations
-
-  useEffect(() => {
-    if (duration && duration > 0) {
-      const timer = setTimeout(() => {
-        setShow(false);
-        // Allow time for fade-out animation before calling onDismiss
-        setTimeout(() => onDismiss(id), 300); // Adjust timing based on transition duration
-      }, duration);
-      return () => clearTimeout(timer);
-    }
-  }, [id, duration, onDismiss]);
+  const toastType = (t: Toast) => {
+    return t.type === "error"
+      ? "error"
+      : t.type === "success"
+        ? "success"
+        : "info";
+  };
+  type = type || toastType(toast);
+  title = title || t(`notification.${type}`);
+  message = message || resolveValue(toast.message, toast);
 
   const handleDismiss = () => {
-    setShow(false);
-    setTimeout(() => onDismiss(id), 300); // Adjust timing
+    hotToast.dismiss(toast.id);
+  };
+
+  const getLiveRegionProps = () => {
+    switch (type) {
+      case "error":
+      case "warning":
+        return { role: "alert", "aria-live": "assertive" as "assertive" };
+      case "success":
+      case "info":
+      default:
+        return { role: "status", "aria-live": "polite" as "polite" };
+    }
   };
 
   return (
     <Transition
-      show={show}
+      show={toast.visible} // Use toast.visible for show state
       as={Fragment}
       enter="transform ease-out duration-300 transition"
       enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
@@ -86,6 +98,8 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
       leaveTo="opacity-0"
     >
       <div
+        {...getLiveRegionProps()} // Add ARIA live region props
+        aria-atomic="true" // Ensure the whole message is read by screen readers
         className={cn(
           "bg-background-page ring-opacity-5 pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg shadow-lg ring-1 ring-black", // Use background-page
           className,
@@ -108,14 +122,15 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
               )}
             </div>
             <div className="ml-4 flex flex-shrink-0">
-              <button
-                type="button"
-                className="bg-background-page text-text-secondary hover:text-text-body focus-visible:ring-focus-indicator inline-flex rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none" // Use design system colors and focus
+              <Button
+                variant="ghost"
+                size="icon"
+                className="p-1.5"
                 onClick={handleDismiss}
-                aria-label={t("dismissNotificationLabel")} // Use translation key
+                aria-label={t("close")} // Added for accessibility
               >
-                <FiX className="h-5 w-5" aria-hidden="true" />
-              </button>
+                <FiX size={20} aria-hidden="true" />
+              </Button>
             </div>
           </div>
         </div>

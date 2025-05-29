@@ -30,11 +30,16 @@
       "guides": "Guías",
       "analytics": "Analíticas",
       "api": "API",
-      "primaryNavLabel": "Navegación Principal"
+      "primaryNavLabel": "Navegación Principal",
+      "mobileNavLabel": "Navegación Móvil",
+      "userAvatarAlt": "Cuenta de usuario de {username}",
+      "userMenuLabel": "Abrir el menú de navegación del usuario"
     },
     "auth": {
       "login": "Iniciar Sesión",
       "signup": "Registrarse",
+      "loginLabel": "Inicio de sesión de usuario",
+      "signupLabel": "Registro de usuario",
       "logout": "Cerrar Sesión",
       "dashboard": "Panel",
       "profile": "Perfil",
@@ -105,7 +110,8 @@
   },
   "Forms": {
     "requiredIndicator": "*",
-    "dropdownPlaceholder": "Selecciona una opción"
+    "dropdownPlaceholder": "Selecciona una opción",
+    "optionDisabledTooltip": "Esta opción está deshabilitada"
   },
   "Errors": {
     "errorBoundaryTitle": "Algo salió mal",
@@ -117,7 +123,14 @@
     "closeModalLabel": "Cerrar modal",
     "dismissNotificationLabel": "Descartar notificación",
     "logoTitle": "Logotipo de Paletas Estéticas - Harmonic Stack",
-    "logoDescription": "Pila abstracta de rectángulos de colores que representan paletas de colores."
+    "logoDescription": "Pila abstracta de rectángulos de colores que representan paletas de colores.",
+    "avatarAltText": "Avatar de usuario",
+    "notification": {
+      "success": "Éxito",
+      "error": "Error",
+      "warning": "Advertencia",
+      "info": "Información"
+    }
   },
   "ColorSwatch": {
     "copyHexLabel": "Copiar color {hexValue}",

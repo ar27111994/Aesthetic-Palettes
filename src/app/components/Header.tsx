@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import Link from "next/link";
 import {
   FiSearch,
@@ -16,6 +22,7 @@ import {
   FiBookOpen,
   FiPieChart,
   FiCode,
+  FiLogOut,
 } from "react-icons/fi";
 import { Button } from "@components/Button"; // Assuming Button component exists
 import { Avatar } from "@components/Avatar"; // Assuming Avatar component exists
@@ -28,26 +35,103 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@utils/cn";
 import { InputField } from "@components/InputField"; // Import InputField
 import Logo from "@components/Logo";
+// import { useToast } from "@hooks/useToast"; // Example: if a toast system is available
 
-// TODO: Replace with actual authentication status logic
-const useAuth = () => ({
-  isAuthenticated: false,
-  user: null,
-  logout: () => {},
-});
+// TODO: Replace with actual authentication status logic from context or store
+const useAuth = () => {
+  // This should ideally come from a global state (Context API, Redux, Zustand)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<null | {
+    avatarUrl?: string;
+    username: string;
+  }>(null);
+  const logout = useCallback(() => {
+    setIsAuthenticated(false);
+    setUser(null);
+    // Add actual logout logic here (e.g., API call, clear tokens)
+    console.log("User logged out");
+  }, []);
+  // Simulate login for testing
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setIsAuthenticated(true);
+  //     setUser({ username: "TestUser", avatarUrl: "/path/to/avatar.png" });
+  //   }, 2000);
+  // }, []);
+  return { isAuthenticated, user, logout };
+};
 
-// TODO: Replace with actual theme toggle logic
+// TODO: Replace with actual theme toggle logic from context or store
 const useTheme = () => {
+  // This should ideally come from a global state and persist preference
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+  const toggleTheme = useCallback(() => {
+    setIsDarkMode((prev) => !prev);
+    // Add actual theme switching logic here (e.g., update body class, save to localStorage)
+    console.log("Theme toggled");
+  }, []);
   return { isDarkMode, toggleTheme };
 };
 
-const Header: React.FC = () => {
+/**
+ * @file Header.tsx
+ * @description Main application header component.
+ *
+ * @component Header
+ * @returns {React.ReactElement} The rendered header component.
+ *
+ * @feature Mobile-First Responsive Design:
+ * - Adapts layout and functionality for various screen sizes (mobile, tablet, desktop).
+ * - Uses a collapsible mobile menu for navigation on smaller screens.
+ * - Search bar expands/collapses appropriately.
+ *
+ * @feature SEO:
+ * - Uses semantic HTML elements (`<header>`, `<nav>`, `<h1>`).
+ * - Provides descriptive `aria-label` attributes for interactive elements.
+ * - Includes a skip navigation link for accessibility and SEO.
+ *
+ * @feature Accessibility (WCAG AA & AAA Considerations):
+ * - Keyboard Navigation: All interactive elements are focusable and operable via keyboard.
+ * - Focus Management: Focus is trapped within the mobile menu when open; focus is returned to the trigger button when closed.
+ * - ARIA Attributes: Uses `aria-expanded`, `aria-controls`, `aria-current`, `aria-label`, `aria-labelledby`, `aria-hidden`, `role="dialog"`, `aria-modal="true"`.
+ * - Skip Navigation Link: Allows users to bypass the header and go directly to main content.
+ * - Contrast: Leverages CSS classes that should adhere to WCAG contrast guidelines (responsibility of the theme/styling).
+ * - Tooltips: Icon-only buttons should have tooltips for clarity (implementation depends on a `Tooltip` component).
+ * - Toasts: (Placeholder for potential toast notifications, e.g., for search actions if applicable).
+ *
+ * @feature Performance Optimization:
+ * - `React.memo` can be used to memoize the component if its props are unlikely to change frequently.
+ * - `useCallback` is used for event handlers to prevent unnecessary re-renders of child components.
+ * - `useEffect` dependencies are carefully managed.
+ * - Conditional rendering and CSS transitions are used to manage visibility and layout changes efficiently.
+ *
+ * @feature Next.js PPR (Partial Prerendering):
+ * - The component is client-rendered ("use client") due to its interactive nature (state, effects, event handlers).
+ * - For PPR, dynamic data fetching (auth status, user info, theme, locale) should ideally be handled via Next.js data fetching methods or client-side fetching post-hydration if they don't need to be part of the initial static shell.
+ * - Static parts of the header (logo, site name, basic structure) can benefit from PPR if dynamic parts are deferred.
+ *
+ * @dependency next/link: For client-side navigation.
+ * @dependency next-intl: For internationalization.
+ * @dependency react-icons/fi: For icons.
+ * @dependency @components/*: Utilizes shared components like Button, Avatar, Menu, Accordion, InputField, Logo, Tooltip.
+ * @dependency @context/useLocalesContext: For managing language context.
+ * @dependency @utils/cn: For conditional class names.
+ *
+ * @todo
+ * - Integrate actual authentication logic.
+ * - Integrate actual theme persistence and application.
+ * - Implement a shared `Tooltip` component and integrate it for all icon-only buttons.
+ * - Consider replacing custom `Menu` with `@headlessui/react` `Menu` for enhanced accessibility and features if not already done.
+ * - Review and ensure WCAG contrast ratios are met for all text and UI elements against their backgrounds across themes.
+ */
+const HeaderComponent: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const mobileSearchRef = useRef<HTMLInputElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuDrawerRef = useRef<HTMLDivElement>(null);
+
   const { isAuthenticated, user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const { language, availableLanguages } = useLocalesContext() as {
@@ -58,233 +142,321 @@ const Header: React.FC = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
+  // const { addToast } = useToast(); // Example for toasts
 
-  const navLinks = [
-    { href: "/generator", label: t("nav.generator"), icon: FiDroplet },
-    { href: "/explore", label: t("nav.explore"), icon: FiCompass },
-    { href: "/community", label: t("nav.community"), icon: FiUsers },
-    { href: "/guides", label: t("nav.guides"), icon: FiBookOpen },
-    { href: "/analytics", label: t("nav.analytics"), icon: FiPieChart },
-    { href: "/api", label: t("nav.api"), icon: FiCode },
-  ];
+  const navLinks = useMemo(
+    () => [
+      { href: "/generator", label: t("nav.generator"), icon: FiDroplet },
+      { href: "/explore", label: t("nav.explore"), icon: FiCompass },
+      { href: "/community", label: t("nav.community"), icon: FiUsers },
+      { href: "/guides", label: t("nav.guides"), icon: FiBookOpen },
+      { href: "/analytics", label: t("nav.analytics"), icon: FiPieChart },
+      { href: "/api", label: t("nav.api"), icon: FiCode },
+    ],
+    [t],
+  );
 
-  const userMenuItems = [
-    { href: "/dashboard", label: t("auth.dashboard") },
-    { href: "/profile", label: t("auth.profile") },
-    { href: "/settings", label: t("auth.settings") },
-    { href: "/developer", label: t("auth.developer") },
-  ];
+  const userMenuItems = useMemo(
+    () => [
+      { href: "/dashboard", label: t("auth.dashboard") },
+      { href: "/profile", label: t("auth.profile") },
+      { href: "/settings", label: t("auth.settings") },
+      { href: "/developer", label: t("auth.developer") },
+    ],
+    [t],
+  );
 
   // Close mobile menu when user navigates to a new page
   useEffect(() => {
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
     }
-  }, [pathname, searchParams, isMobileMenuOpen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, searchParams]); // isMobileMenuOpen removed to prevent re-triggering on its own change
 
   // Focus the search input when it is expanded
   useEffect(() => {
+    let timerId: NodeJS.Timeout;
     if (isSearchExpanded && searchRef.current) {
-      const timerId = setTimeout(() => {
-        searchRef.current?.focus();
-      }, 100); // Delay to allow CSS transition to make the input visible
-      return () => clearTimeout(timerId);
+      // Using requestAnimationFrame for smoother focus after layout changes
+      timerId = setTimeout(() =>
+        requestAnimationFrame(() => {
+          searchRef.current?.focus();
+        }),
+      );
     }
+    return () => clearTimeout(timerId); // Clear timeout if component unmounts or effect re-runs
   }, [isSearchExpanded]);
 
   // Focus the mobile search input when menu is opened
   useEffect(() => {
     if (isMobileMenuOpen && mobileSearchRef.current) {
-      const timerId = setTimeout(() => {
+      requestAnimationFrame(() => {
         mobileSearchRef.current?.focus();
-      }, 100); // Delay to allow CSS transition to make the input visible
-      return () => clearTimeout(timerId);
+      });
     }
   }, [isMobileMenuOpen]);
 
-  const toggleSearchBar = () =>
-    setIsSearchExpanded((prevIsSearchExpanded) => !prevIsSearchExpanded);
+  // Trap focus within the mobile menu when it's open
+  useEffect(() => {
+    if (!isMobileMenuOpen || !mobileMenuDrawerRef.current) return;
 
-  const renderNavLinks = (isMobile = false) => (
-    <nav
-      aria-label={t("nav.primaryNavLabel")}
-      className={cn({
-        "flex flex-col": isMobile,
-        "flex items-center space-x-6": !isMobile,
-      })}
-    >
-      {navLinks.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          aria-current={pathname === link.href}
-          className={cn(
-            "flex text-base font-medium transition-colors motion-reduce:transition-none",
-            {
-              "p-2": isMobile,
-              "p-1": pathname === link.href && !isMobile,
-              "text-primary-action-hover hover:bg-background-subtle font-semibold":
-                pathname === link.href,
-              "text-text-heading hover:text-primary-action-hover":
-                pathname !== link.href,
-              "bg-primary-action-hover-alpha-10 hover:bg-primary-action-hover-alpha-20":
-                pathname === link.href && isMobile,
-              "hover:bg-primary-action-hover-alpha-10":
-                pathname !== link.href && isMobile,
-            },
-          )}
-        >
-          {isMobile && link.icon && (
-            <link.icon className="mr-2 h-5 w-5 shrink-0" />
-          )}
-          {link.label}
-        </Link>
-      ))}
-    </nav>
-  );
+    const focusableElements =
+      mobileMenuDrawerRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
 
-  const renderUserActions = (isMobile = false) => (
-    <div
-      className={cn("flex", {
-        "border-border-divider flex-row justify-between border-t pt-4":
-          isMobile,
-        "items-center justify-center space-x-4": !isMobile,
-      })}
-    >
-      {isAuthenticated && user ? (
-        <Menu
-          trigger={
-            <Avatar
-              src={(user as any).avatarUrl}
-              alt={(user as any).username}
-              size="sm"
-              fallback={<FiUser aria-hidden="true" />}
-            />
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Tab") {
+        if (event.shiftKey) {
+          // Shift + Tab
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            event.preventDefault();
           }
-          items={[
-            ...userMenuItems,
-            { isSeparator: true }, // Add separator before logout
-            {
-              label: t("auth.logout"), // Use translation key
-              onClick: logout,
-              isButton: true, // Style as button if needed by Menu component
-            },
-          ]}
-          ariaLabel={t("userMenu")} // Add aria-label translation
-        />
-      ) : (
-        <>
-          <Button
-            variant={isMobile ? "tertiary" : "secondary"}
-            size="sm"
-            onClick={() => router.push("/login")}
-          >
-            {t("auth.login")}
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => router.push("/signup")}
-          >
-            {t("auth.signup")}
-          </Button>
-        </>
-      )}
-    </div>
+        } else {
+          // Tab
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            event.preventDefault();
+          }
+        }
+      }
+      if (event.key === "Escape") {
+        setIsMobileMenuOpen(false);
+        mobileMenuButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    // Focus the first focusable element in the drawer when it opens
+    if (firstElement) firstElement.focus();
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMobileMenuOpen]);
+
+  const toggleSearchBar = useCallback(
+    () => setIsSearchExpanded((prevIsSearchExpanded) => !prevIsSearchExpanded),
+    [],
   );
 
-  const mobileLocaleSwitcher = {
-    id: "language-switcher-mobile",
-    title: (
-      <div className="flex w-full items-center justify-between">
-        <span className="flex items-center">
-          <FiGlobe className="mr-2 h-5 w-5" aria-hidden="true" />
-          {t("languageSelection")}: {language.toUpperCase()}
-        </span>
-      </div>
-    ),
-    content: (
-      <div className="flex flex-col space-y-2 pt-2">
-        {availableLanguages.map((lang) => (
-          <Button
-            key={lang.value}
-            variant={language === lang.value ? "tertiary" : "secondary"}
-            size="sm"
-            onClick={lang.onClick}
-            className="w-full justify-start text-left"
-            aria-label={t("switchLanguage", {
-              language: lang.label || "",
-            })}
-          >
-            {lang.label}
-          </Button>
-        ))}
-      </div>
-    ),
-  };
+  const handleMobileMenuToggle = useCallback(() => {
+    setIsMobileMenuOpen((prev) => !prev);
+  }, []);
 
-  const mobileThemeSwitcher = {
-    id: "theme-switcher-mobile",
-    title: (
-      <div className="flex w-full items-center justify-between">
-        <span className="flex items-center">
-          {isDarkMode ? (
-            <FiSun className="mr-2 h-5 w-5" aria-hidden="true" />
-          ) : (
-            <FiMoon className="mr-2 h-5 w-5" aria-hidden="true" />
-          )}
-          {t("themeOptions")}
-        </span>
-      </div>
+  const renderNavLinks = useCallback(
+    (isMobile = false) => (
+      <nav
+        aria-label={t(isMobile ? "nav.mobileNavLabel" : "nav.primaryNavLabel")} // Differentiate labels
+        className={cn("flex", {
+          "w-full flex-col space-y-1 p-2": isMobile, // Adjusted padding and spacing for mobile
+          "flex items-center space-x-6": !isMobile,
+        })}
+      >
+        {navLinks.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            aria-current={pathname === link.href}
+            className={cn(
+              "flex rounded-md text-base font-medium transition-colors motion-reduce:transition-none", // Added rounded-md for better focus visibility on mobile
+              {
+                "p-2": isMobile,
+                "p-1": pathname === link.href && !isMobile,
+                "text-primary-action-hover hover:bg-background-subtle font-semibold":
+                  pathname === link.href,
+                "text-text-heading hover:text-primary-action-hover":
+                  pathname !== link.href,
+                "bg-primary-action-hover-alpha-10 hover:bg-primary-action-hover-alpha-20":
+                  pathname === link.href && isMobile,
+                "hover:bg-primary-action-hover-alpha-10":
+                  pathname !== link.href && isMobile,
+              },
+            )}
+          >
+            {isMobile && link.icon && (
+              <link.icon className="mr-2 h-5 w-5 shrink-0" />
+            )}
+            {link.label}
+          </Link>
+        ))}
+      </nav>
     ),
-    content: (
-      <div className="pt-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={toggleTheme}
-          aria-pressed={isDarkMode}
-          aria-label={t(isDarkMode ? "switchToLightMode" : "switchToDarkMode")}
-          className="flex w-full items-center justify-start text-left"
+    [navLinks, pathname, t],
+  );
+
+  const renderUserActions = useCallback(
+    (isMobile = false) => {
+      const menuItemsForUser = useMemo(
+        () => [
+          ...userMenuItems,
+          { isSeparator: true },
+          {
+            label: t("auth.logout"),
+            onClick: logout,
+            isButton: true,
+            icon: FiLogOut,
+          },
+        ],
+        [userMenuItems, t, logout],
+      );
+
+      return (
+        <div
+          className={cn("flex", {
+            // Added border-t for mobile user actions
+            "border-border-divider flex-col space-y-2 border-t pt-4": isMobile,
+            "items-center justify-center space-x-4": !isMobile,
+          })}
         >
-          {isDarkMode ? (
-            <FiSun className="mr-2 h-5 w-5" aria-hidden="true" />
+          {isAuthenticated && user ? (
+            <Menu
+              trigger={
+                <Avatar
+                  src={(user as any).avatarUrl}
+                  alt={t("userAvatarAlt", { username: (user as any).username })}
+                  size="sm"
+                  fallback={<FiUser aria-hidden="true" />}
+                />
+              }
+              items={menuItemsForUser}
+              ariaLabel={t("userMenuLabel")}
+            />
           ) : (
-            <FiMoon className="mr-2 h-5 w-5" aria-hidden="true" />
+            <>
+              <Button
+                variant={isMobile ? "tertiary" : "secondary"} // Consistent variant for login
+                size="sm"
+                className={cn({ "w-full": isMobile })}
+                onClick={() => router.push("/login")} // Consider using NextLink for prefetching if appropriate
+                aria-label={t("auth.loginLabel")} // More descriptive aria-label
+              >
+                {t("auth.login")}
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                className={cn({ "w-full": isMobile })}
+                onClick={() => router.push("/signup")} // Consider using NextLink for prefetching
+                aria-label={t("auth.signupLabel")} // More descriptive aria-label
+              >
+                {t("auth.signup")}
+              </Button>
+            </>
           )}
-          {t(isDarkMode ? "switchToLightMode" : "switchToDarkMode")}
-        </Button>
-      </div>
-    ),
-  };
+        </div>
+      );
+      // It's good practice to memoize if props don't change often, but ensure dependencies are correct.
+    },
+    [isAuthenticated, user, logout, router, t, userMenuItems],
+  );
+
+  const mobileLocaleSwitcher = useMemo(
+    () => ({
+      id: "language-switcher-mobile",
+      title: (
+        <div className="flex w-full items-center justify-between">
+          <span className="flex items-center">
+            <FiGlobe className="mr-2 h-5 w-5" aria-hidden="true" />
+            {t("languageSelection")}: {language.toUpperCase()}
+          </span>
+        </div>
+      ),
+      content: (
+        <div className="flex flex-col space-y-2 pt-2">
+          {availableLanguages.map((lang) => (
+            <Button
+              key={lang.value}
+              variant={language === lang.value ? "tertiary" : "secondary"}
+              size="sm"
+              onClick={lang.onClick}
+              className="w-full justify-start text-left"
+              aria-label={t("switchLanguage", {
+                language: lang.label || "",
+              })}
+            >
+              {lang.label}
+            </Button>
+          ))}
+        </div>
+      ),
+    }),
+    [t, language, availableLanguages],
+  );
+
+  const mobileThemeSwitcher = useMemo(
+    () => ({
+      id: "theme-switcher-mobile",
+      title: (
+        <div className="flex w-full items-center justify-between">
+          <span className="flex items-center">
+            {isDarkMode ? (
+              <FiSun className="mr-2 h-5 w-5" aria-hidden="true" />
+            ) : (
+              <FiMoon className="mr-2 h-5 w-5" aria-hidden="true" />
+            )}
+            {t("themeOptions")}
+          </span>
+        </div>
+      ),
+      content: (
+        <div className="pt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleTheme}
+            aria-pressed={isDarkMode}
+            aria-label={t(
+              isDarkMode ? "switchToLightMode" : "switchToDarkMode",
+            )}
+            className="flex w-full items-center justify-start text-left"
+          >
+            {isDarkMode ? (
+              <FiMoon className="mr-2 h-5 w-5" aria-hidden="true" />
+            ) : (
+              <FiSun className="mr-2 h-5 w-5" aria-hidden="true" />
+            )}
+            {t(isDarkMode ? "switchToLightMode" : "switchToDarkMode")}
+          </Button>
+        </div>
+      ),
+    }),
+    [t, isDarkMode, toggleTheme],
+  );
 
   return (
-    <header className="border-border-divider bg-background-page sticky top-0 z-50 w-full border-b">
-      {/* Skip Navigation Link - Appx C.2 */}
+    <header className="border-border-divider bg-background-page sticky top-0 z-50 w-full border-b print:hidden">
+      {/* Skip Navigation Link - Appx C.2 from wireframes.md */}
       <a
         href="#main-content"
-        className="focus:bg-background-page focus:text-text-body focus:ring-offset-focus-indicator sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:ring-2 focus:ring-offset-2"
+        className="focus:bg-primary-focus focus:text-focus-indicator focus:ring-offset-focus-indicator sr-only focus:not-sr-only focus:absolute focus:top-full focus:left-4 focus:z-[9999] focus:p-3 focus:ring-2 focus:ring-offset-2"
       >
-        {t("skipToMainContent")} {/* Use translation key */}
+        {t("skipToMainContent")}
       </a>
-      <div className="mx-auto flex h-16 w-full items-center justify-between px-4 md:px-6">
+      <div className="mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Left: Logo */}
-        <Link
-          passHref
-          referrerPolicy="no-referrer"
-          href="/"
-          target="_blank"
-          className="text-accent hover:text-primary-action-hover flex items-center justify-center space-x-2"
-        >
-          <Logo
-            aria-label={t("logoAlt")} // Use translation key
-            className="h-15 w-auto object-cover"
-          />
-          <h3 className="truncate font-extrabold">{t("siteName")}</h3>
-          {/* Use translation key */}
-        </Link>
+        <div className="flex items-center">
+          <Link
+            passHref
+            href="/"
+            aria-label={t("logoAlt")}
+            className="text-accent hover:text-primary-action-hover focus-visible:ring-ring flex items-center justify-center space-x-2 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          >
+            <Logo
+              aria-hidden="true" // Decorative if the Link has aria-label
+              className="h-8 w-auto object-contain md:h-10" // Adjusted size for responsiveness
+            />
+            <h1 className="truncate text-lg font-extrabold md:text-xl">
+              {t("siteName")}
+            </h1>
+          </Link>
+        </div>
 
-        {/* Center: Desktop Navigation */}
+        {/* Center: Desktop Navigation - Hidden on smaller screens, shown on xl and up */}
         <div
           className={cn(
             "will-change-opacity will-change-max-width will-change-max-height will-change-pointer-events flex flex-1 justify-center opacity-0 transition-[max-width,max-height,opacity,transform,pointer-events] duration-500 ease-out will-change-transform motion-reduce:transition-none max-xl:hidden",
@@ -308,25 +480,29 @@ const Header: React.FC = () => {
             {/* Search */}
             <div className="flex flex-1 items-center justify-end">
               <Button
-                className={cn("hover:text-primary-action-hover", {
+                className={cn("hover:text-primary-action-hover relative", {
                   "text-primary-action border-primary-action hover:border-primary-action-hover border-2":
                     isSearchExpanded,
                 })}
                 variant="ghost"
                 size="icon"
-                aria-label={t("toggleSearchBar")} // Use translation key
+                aria-label={t("toggleSearchBar")}
                 onClick={toggleSearchBar}
                 aria-expanded={isSearchExpanded}
+                aria-controls="desktop-search-input" // Controls the input field
+                tooltipContent={t("toggleSearchBar")}
+                tooltipSide="bottom"
               >
                 <FiSearch className="h-5 w-5 text-inherit" aria-hidden="true" />
               </Button>
               <InputField
+                id="desktop-search-input" // Added ID for aria-controls
                 ref={searchRef}
-                label={t("searchLabel")} // Use translation key
+                label={t("searchLabel")}
                 hideLabel={true}
                 type="search"
-                placeholder={t("searchPlaceholder")} // Use translation key
-                aria-label={t("searchLabel")} // Add translation key for search input aria-label
+                placeholder={t("searchPlaceholder")}
+                aria-label={t("searchLabel")}
                 panelClassName={cn({
                   "w-0": !isSearchExpanded,
                   "-order-1": isSearchExpanded,
@@ -344,6 +520,7 @@ const Header: React.FC = () => {
                   {
                     "pointer-events-auto w-[calc(100%-(--spacing(4)))] translate-x-2 opacity-100":
                       isSearchExpanded, // EXPANDED state
+                    // Ensure focus ring is also hidden when collapsed
                     "pointer-events-none m-0 w-0 max-w-0 translate-x-0 border-none p-0 opacity-0":
                       !isSearchExpanded, // COLLAPSED state
                   },
@@ -358,7 +535,6 @@ const Header: React.FC = () => {
                   className="hover:text-primary-action-hover aria-expanded:text-primary-action aria-expanded:border-primary-action hover:border-primary-action-hover aria-expanded:border-2"
                   variant="ghost"
                   size="icon"
-                  aria-label={t("switchLanguage", { language: language })} // Use translation key with dynamic value
                 >
                   <FiGlobe
                     className="h-5 w-5 text-inherit"
@@ -368,11 +544,15 @@ const Header: React.FC = () => {
               }
               currentValue={language}
               items={availableLanguages}
-              ariaLabel={t("languageSelection")} // Use translation key
+              ariaLabel={t("languageSelection")}
             />
 
             {/* Theme Toggle */}
             <Button
+              tooltipContent={
+                isDarkMode ? t("switchToLightMode") : t("switchToDarkMode")
+              }
+              tooltipSide="bottom"
               className="hover:text-primary-action-hover"
               variant="ghost"
               size="icon"
@@ -380,7 +560,7 @@ const Header: React.FC = () => {
               aria-pressed={isDarkMode}
               aria-label={t(
                 isDarkMode ? "switchToLightMode" : "switchToDarkMode",
-              )} // Use conditional translation keys
+              )}
             >
               {isDarkMode ? (
                 <FiSun className="h-5 w-5 text-inherit" aria-hidden="true" />
@@ -395,7 +575,9 @@ const Header: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <div className="xl:hidden">
+            {/* Ensures this is only for mobile menu scenarios */}
             <Button
+              ref={mobileMenuButtonRef}
               variant="ghost"
               size="icon"
               className={cn({
@@ -406,7 +588,7 @@ const Header: React.FC = () => {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-controls="mobile-menu-drawer" // Link button to the drawer
               aria-expanded={isMobileMenuOpen}
-              aria-label={t("toggleMobileMenu")} // Use translation key
+              aria-label={t("toggleMobileMenu")}
             >
               {isMobileMenuOpen ? (
                 <FiX className="h-5 w-5" aria-hidden="true" />
@@ -437,9 +619,10 @@ const Header: React.FC = () => {
 
       {/* Mobile Menu Overlay/Drawer */}
       <div
-        key={pathname} // Add key prop for React to re-render on pathname change
-        tabIndex={-1} // Allows focus to be trapped within the drawer
-        id="mobile-menu-drawer" // Added ID for aria-controls
+        key={pathname + searchParams.toString()} // Ensure re-render on query param changes too for effects
+        ref={mobileMenuDrawerRef} // Add ref for focus trapping
+        tabIndex={-1}
+        id="mobile-menu-drawer"
         role="dialog"
         aria-modal="true"
         aria-labelledby="mobile-menu-title"
@@ -477,18 +660,18 @@ const Header: React.FC = () => {
           )}
         >
           <h2 id="mobile-menu-title" className="sr-only">
-            {t("mobileMenuTitle")} {/* Use translation key */}
+            {t("mobileMenuTitle")}
           </h2>
           {/* Mobile Search */}
           <div className="border-border-divider border-b pb-4 lg:hidden">
             <InputField
               ref={mobileSearchRef}
-              label={t("searchLabel")} // Use translation key
+              label={t("searchLabel")}
               hideLabel={true}
               hint={<FiSearch aria-hidden="true" />}
               type="search"
-              placeholder={t("searchPlaceholder")} // Use translation key
-              aria-label={t("searchLabel")} // Use translation key
+              placeholder={t("searchPlaceholder")}
+              aria-label={t("searchLabel")}
               className="focus:ring-2 focus:outline-none"
             />
           </div>
@@ -497,7 +680,10 @@ const Header: React.FC = () => {
           {/* Language and Theme Switcher for Mobile using Accordion */}
           <div className="border-border-divider border-t pt-4 lg:hidden">
             <Accordion
-              items={[mobileLocaleSwitcher, mobileThemeSwitcher]}
+              items={useMemo(
+                () => [mobileLocaleSwitcher, mobileThemeSwitcher],
+                [mobileLocaleSwitcher, mobileThemeSwitcher],
+              )}
               itemClassName="w-full p-0"
               buttonClassName="w-full text-left justify-between rounded-md"
               panelClassName="pb-0 pt-0 px-0"
@@ -510,4 +696,4 @@ const Header: React.FC = () => {
   );
 };
 
-export default Header;
+export default React.memo(HeaderComponent);

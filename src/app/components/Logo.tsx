@@ -1,7 +1,9 @@
 import { useTranslations } from "next-intl";
-import React, { SVGProps } from "react";
+import React, { SVGProps, memo } from "react";
 
-const Logo: React.FC<SVGProps<SVGSVGElement>> = (props) => {
+// For optimal accessibility, if this Logo component is wrapped in an interactive element (e.g., an <a> tag),
+// ensure the wrapper is keyboard focusable, operable, and has a clear visible focus indicator.
+const LogoComponent: React.FC<SVGProps<SVGSVGElement>> = (props) => {
   const t = useTranslations("Common"); // Initialize translations for Common namespace
 
   return (
@@ -9,6 +11,7 @@ const Logo: React.FC<SVGProps<SVGSVGElement>> = (props) => {
       viewBox="0 0 80 80"
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
+      role="img" // Added for better semantics and accessibility
       {...props}
     >
       <title>{t("logoTitle")}</title>
@@ -98,4 +101,5 @@ const Logo: React.FC<SVGProps<SVGSVGElement>> = (props) => {
   );
 };
 
+const Logo = memo(LogoComponent);
 export default Logo;

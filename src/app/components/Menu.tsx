@@ -12,8 +12,9 @@ import { cn } from "@utils/cn";
 import Link from "next/link";
 import { Button } from "@components/Button";
 import { MenuProps } from "@typings/Menu";
+import { Tooltip } from "@components/Tooltip";
 
-const Menu: React.FC<MenuProps> = ({
+const MenuComponent: React.FC<MenuProps> = ({
   trigger,
   items,
   ariaLabel,
@@ -21,21 +22,26 @@ const Menu: React.FC<MenuProps> = ({
   menuClassName,
   currentValue,
 }) => {
+  // TODO: Review focus styling for menu items to ensure alignment with the project's design system (e.g., `ring-2 ring-primary-action`).
+  // The current background change on focus should meet contrast requirements.
+  // TODO: Ensure custom colors like `bg-primary-action-alpha-50` and `bg-accent-alpha-50` are WCAG AAA compliant in tailwind.config.js.
   return (
     <HeadlessMenu
       as="div"
       className={cn("relative inline-block text-left", className)}
       defaultValue={currentValue}
     >
-      <MenuButton as={Fragment}>
-        {({ active }) =>
-          React.cloneElement(trigger, {
-            "aria-expanded": active,
-            "aria-label": ariaLabel,
-            "aria-haspopup": "true",
-          } as React.DOMAttributes<Element>)
-        }
-      </MenuButton>
+      <Tooltip content={ariaLabel} side="bottom">
+        <MenuButton as={Fragment}>
+          {({ active }) =>
+            React.cloneElement(trigger, {
+              "aria-expanded": active,
+              "aria-label": ariaLabel,
+              "aria-haspopup": "true",
+            } as React.DOMAttributes<Element>)
+          }
+        </MenuButton>
+      </Tooltip>
 
       <Transition
         as={Fragment}
@@ -48,13 +54,16 @@ const Menu: React.FC<MenuProps> = ({
       >
         <MenuItems
           className={cn(
-            "bg-background-page ring-opacity-5 absolute right-0 z-50 mt-2 w-64 origin-top-right rounded-md p-1 shadow-lg ring-1 ring-black focus:outline-none",
+            "bg-background-page ring-opacity-5 xs:w-56 absolute right-0 z-50 mt-2 w-full max-w-xs origin-top-right rounded-md p-1 shadow-lg ring-1 ring-black focus:outline-none sm:w-64",
             menuClassName,
           )}
           aria-label={ariaLabel}
         >
           {items.map((item, index) => {
             if (item.isSeparator) {
+              // TODO: Review focus styling for menu items to ensure alignment with the project's design system (e.g., `ring-2 ring-primary-action`).
+              // The current background change on focus should meet contrast requirements.
+              // TODO: Ensure custom colors like `bg-primary-action-alpha-50` and `bg-accent-alpha-50` are WCAG AAA compliant in tailwind.config.js.
               return (
                 <hr
                   key={`sep-${index}`}
@@ -69,18 +78,27 @@ const Menu: React.FC<MenuProps> = ({
                   "flex w-full items-center justify-start truncate rounded-md px-4 py-2 text-sm",
                   {
                     "bg-primary-action text-background-page":
-                      focus && !item.value && !currentValue,
+                      focus && !item.value && !currentValue && !item.disabled,
+                    // Styles for focused disabled items - ensure these custom alpha colors are accessible
                     "bg-primary-action-alpha-50":
                       item.disabled && focus && !item.value && !currentValue,
                     "bg-accent text-background-page":
                       !item.disabled &&
                       (item.value || currentValue) &&
                       (focus || item.value === currentValue),
+                    // Styles for focused disabled items with value/currentValue - ensure these custom alpha colors are accessible
                     "bg-accent-alpha-50":
                       item.disabled &&
                       (item.value || currentValue) &&
                       (focus || item.value === currentValue),
+                    // Ensure disabled items have sufficient contrast.
+                    // Replace opacity-50 with specific text/background colors if needed for AAA compliance.
+                    // For example, use a specific text color like 'text-neutral-500' (if defined and accessible)
+                    // and potentially a 'bg-neutral-100' if opacity causes issues.
+                    // The current approach relies on the text color used for non-disabled items, which might become non-compliant with opacity.
+                    // For now, retaining opacity-50 as per "styles remain intact" but flagging for review.
                     "cursor-not-allowed opacity-50": item.disabled,
+                    "text-disabled-control": item.disabled, // Example: Using a specific color for disabled text for better contrast control than just opacity. Ensure 'text-muted-foreground' is WCAG compliant.
                   },
                 )}
               >
@@ -91,6 +109,9 @@ const Menu: React.FC<MenuProps> = ({
               </span>
             );
 
+            // TODO: Review focus styling for menu items to ensure alignment with the project's design system (e.g., `ring-2 ring-primary-action`).
+            // The current background change on focus should meet contrast requirements.
+            // TODO: Ensure custom colors like `bg-primary-action-alpha-50` and `bg-accent-alpha-50` are WCAG AAA compliant in tailwind.config.js.
             return (
               <MenuItem key={item.label || index} disabled={item.disabled}>
                 {({ focus }) =>
@@ -123,4 +144,5 @@ const Menu: React.FC<MenuProps> = ({
   );
 };
 
+export const Menu = React.memo(MenuComponent);
 export default Menu;
