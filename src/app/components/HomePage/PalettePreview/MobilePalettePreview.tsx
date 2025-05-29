@@ -1,5 +1,5 @@
 // app/components/HomePage/PalettePreview/MobilePalettePreview.tsx
-import React, { useState, useEffect } from "react"; // Added useState, useEffect
+import React, { useState, useEffect, useMemo } from "react"; // Added useState, useEffect
 import {
   FiBarChart2,
   FiWifi,
@@ -92,10 +92,9 @@ export function MobilePalettePreview({
   // Determine which palettes to display
   // On server or initial client hydration, use fixed palettes.
   // After client mount and useEffect, use client-determined random palettes.
+  const fixedPalettesRef = useMemo(createFixedMobilePalettes, []);
   const currentPalettes =
-    palettesForDisplay === null
-      ? createFixedMobilePalettes()
-      : palettesForDisplay;
+    palettesForDisplay === null ? fixedPalettesRef : palettesForDisplay;
 
   return (
     // {/* Visual Palette Preview - Mobile */}

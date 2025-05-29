@@ -22,6 +22,17 @@ const MenuComponent: React.FC<MenuProps> = ({
   menuClassName,
   currentValue,
 }) => {
+  const menuTrigger = (
+    <MenuButton as={Fragment}>
+      {({ active }) =>
+        React.cloneElement(trigger, {
+          "aria-expanded": active,
+          "aria-label": ariaLabel,
+          "aria-haspopup": "true",
+        } as React.DOMAttributes<Element>)
+      }
+    </MenuButton>
+  );
   // TODO: Review focus styling for menu items to ensure alignment with the project's design system (e.g., `ring-2 ring-primary-action`).
   // The current background change on focus should meet contrast requirements.
   // TODO: Ensure custom colors like `bg-primary-action-alpha-50` and `bg-accent-alpha-50` are WCAG AAA compliant in tailwind.config.js.
@@ -31,17 +42,13 @@ const MenuComponent: React.FC<MenuProps> = ({
       className={cn("relative inline-block text-left", className)}
       defaultValue={currentValue}
     >
-      <Tooltip content={ariaLabel} side="bottom">
-        <MenuButton as={Fragment}>
-          {({ active }) =>
-            React.cloneElement(trigger, {
-              "aria-expanded": active,
-              "aria-label": ariaLabel,
-              "aria-haspopup": "true",
-            } as React.DOMAttributes<Element>)
-          }
-        </MenuButton>
-      </Tooltip>
+      {ariaLabel ? (
+        <Tooltip content={ariaLabel} side="bottom">
+          {menuTrigger}
+        </Tooltip>
+      ) : (
+        menuTrigger
+      )}
 
       <Transition
         as={Fragment}
@@ -130,9 +137,14 @@ const MenuComponent: React.FC<MenuProps> = ({
                       {content({ focus })}
                     </Button>
                   ) : (
-                    <Link href="#" onClick={close}>
+                    <Button
+                      variant="none"
+                      size="sm"
+                      onClick={item.onClick}
+                      className="w-full p-0 text-left text-sm"
+                    >
                       {content({ focus })}
-                    </Link>
+                    </Button>
                   )
                 }
               </MenuItem>

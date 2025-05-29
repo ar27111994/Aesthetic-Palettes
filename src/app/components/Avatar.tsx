@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { cn } from "@utils/cn";
 import { Size } from "@typings/Size";
 import Image from "next/image";
@@ -66,6 +66,11 @@ const Avatar: React.FC<AvatarProps> = ({
   const handleImageError = () => {
     setImageError(true);
   };
+
+  // Reset imageError when the source changes
+  useEffect(() => {
+    setImageError(false);
+  }, [src]);
 
   const avatarContent = (
     <span

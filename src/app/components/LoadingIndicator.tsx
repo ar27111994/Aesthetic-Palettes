@@ -51,15 +51,24 @@ const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
   label,
 }) => {
   const t = useTranslations("Common");
-  const defaultLabel = label || t("loadingLabel");
+  let defaultLabel = label;
+  if (!defaultLabel) {
+    try {
+      defaultLabel = t("loadingLabel");
+    } catch {
+      // Safe fallback to a hard-coded, localised-neutral string
+      defaultLabel = "Loading…";
+    }
+  }
   const { visuallyHiddenProps } = useVisuallyHidden(); // Use React Aria's hook for sr-only text
 
   // Size classes are mapped to Tailwind CSS classes for styling the spinner dimensions and border.
-  const sizeClasses = {
-    sm: "h-4 w-4 border-2", // Small size spinner
-    md: "h-6 w-6 border-2", // Medium (default) size spinner
-    lg: "h-8 w-8 border-4", // Large size spinner
+  const sizeClasses: Record<Size, string> = {
+    sm: "h-4 w-4 border-2",
+    md: "h-6 w-6 border-2",
+    lg: "h-8 w-8 border-4",
   };
+  const resolvedSize = size in sizeClasses ? size : "md";
 
   return (
     <div
@@ -72,7 +81,7 @@ const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
       <div
         className={cn(
           "border-primary-action animate-spin rounded-full border-t-transparent", // Styling for the spinner: color, animation, shape.
-          sizeClasses[size], // Applies dynamic size class based on the `size` prop.
+          sizeClasses[resolvedSize], // Applies dynamic size class based on the `size` prop.
         )}
       ></div>
       {/* Screen-reader only text, hidden visually but read by assistive technologies. */}

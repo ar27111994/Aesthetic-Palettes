@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
+import React, { forwardRef } from "react";
 import { cn } from "@utils/cn";
 import { Size } from "@typings/Size";
-import { useButton, mergeProps } from "react-aria";
+import { useButton, mergeProps, useObjectRef } from "react-aria"; // useFocusableRef is often re-exported or from @react-aria/utils
 import { AriaButtonProps } from "@react-types/button";
 import { Tooltip } from "@components/Tooltip"; // Assuming Tooltip path
 
@@ -16,7 +16,7 @@ export interface TagProps extends Omit<AriaButtonProps<"button">, "children"> {
   tooltipSide?: "top" | "right" | "bottom" | "left";
 }
 
-const Tag: React.FC<TagProps> = (props) => {
+const Tag = forwardRef<HTMLButtonElement, TagProps>((props, ref) => {
   const {
     children,
     className,
@@ -27,11 +27,12 @@ const Tag: React.FC<TagProps> = (props) => {
     ...ariaButtonCompatibleProps // Contains onPress, isDisabled, aria-label, id, etc.
   } = props;
 
-  const ref = useRef<HTMLButtonElement>(null);
   // Pass props that AriaButtonProps expects, plus any other valid HTML button attributes
+  const buttonRef = useObjectRef<HTMLButtonElement>(ref);
+
   const { buttonProps, isPressed } = useButton(
     ariaButtonCompatibleProps as AriaButtonProps<"button">, // Cast to ensure type compatibility for useButton
-    ref,
+    buttonRef,
   );
 
   const baseClasses =
@@ -58,8 +59,9 @@ const Tag: React.FC<TagProps> = (props) => {
 
   const tagElement = (
     <button
+      type="button"
       {...mergeProps(buttonProps, ariaButtonCompatibleProps)} // Merge props from useButton with other passed-in HTML attributes
-      ref={ref}
+      ref={buttonRef} // Use the ref from useFocusableRef
       className={cn(
         baseClasses,
         variantClasses[variant],
@@ -82,6 +84,6 @@ const Tag: React.FC<TagProps> = (props) => {
   }
 
   return tagElement;
-};
+});
 
 export { Tag };

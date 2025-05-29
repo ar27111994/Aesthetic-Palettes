@@ -42,7 +42,7 @@ const ModalComponent: React.FC<ModalProps> = ({
   const titleId = providedTitleId || `modal-title-${uniqueId}`;
   const descriptionId =
     providedDescriptionId || `modal-description-${uniqueId}`;
-  const initialFocusRef = useRef(null); // Ref for initial focus inside the modal
+  const initialFocusRef = useRef<HTMLButtonElement>(null); // Ref for initial focus inside the modal
   const t = useTranslations("Common"); // Initialize translations
 
   const sizeClasses = {
@@ -109,6 +109,7 @@ const ModalComponent: React.FC<ModalProps> = ({
                     {title}
                   </DialogTitle>
                   <Button
+                    ref={initialFocusRef}
                     tooltipContent={t("closeModalLabel")}
                     variant="ghost"
                     size="icon"

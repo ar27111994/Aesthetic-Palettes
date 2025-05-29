@@ -3,7 +3,7 @@
 import React, { forwardRef, useRef } from "react"; // Removed useId, will come from useTextField
 import { cn } from "@utils/cn";
 import { useTranslations } from "next-intl";
-import { useTextField } from "@react-aria/textfield"; // Import useTextField from react-aria
+import { AriaTextFieldOptions, useTextField } from "@react-aria/textfield"; // Import useTextField from react-aria
 import { mergeProps } from "@react-aria/utils"; // Import mergeProps
 
 // TODO: [Accessibility] Consider using React Aria's useNumberField if the input type is 'number' for better number input handling.
@@ -44,31 +44,24 @@ const InputField = forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const t = useTranslations("Forms");
     const localRef = useRef<HTMLInputElement>(null);
-    const ref = forwardedRef || localRef;
-
-    // Destructure autoCapitalize, onChange, spellCheck, value and defaultValue from `props` to prevent them from being spread into useTextField options
-    // with an incompatible type. They will still be applied to the input element via mergeProps.
-    const {
-      autoCapitalize,
-      value,
-      defaultValue,
-      onChange,
-      spellCheck,
-      ...restPropsForTextFieldOptions
-    } = props;
+    const refObject =
+      (typeof forwardedRef === "function"
+        ? localRef
+        : (forwardedRef as React.RefObject<HTMLInputElement> | null)) ??
+      localRef;
 
     const { labelProps, inputProps, descriptionProps, errorMessageProps } =
       useTextField(
         {
-          ...restPropsForTextFieldOptions, // Spread the rest of the props, now excluding autoCapitalize
+          ...props, // Spread the rest of the props
           id,
           label,
           type,
           inputElementType: "input",
           errorMessage: errorMessage,
           isRequired: required,
-        },
-        ref as React.RefObject<HTMLInputElement>,
+        } as AriaTextFieldOptions<"input">,
+        refObject,
       );
 
     const labelClasses = cn("block text-sm font-medium mb-1", {
@@ -105,7 +98,7 @@ const InputField = forwardRef<HTMLInputElement, InputProps>(
         </label>
         <input
           {...mergeProps(inputProps, props)} // Pass the original `props` here, which includes `autoCapitalize`
-          ref={ref}
+          ref={refObject}
           type={type} // Explicitly pass type, as useTextField might not always forward it if it's part of its own logic
           className={inputClasses}
           // aria-invalid is handled by useTextField via inputProps
@@ -113,7 +106,7 @@ const InputField = forwardRef<HTMLInputElement, InputProps>(
         />
         {/* [Accessibility/UX] If 'hint' is an icon leading to a tooltip, ensure the Tooltip component is used and is accessible. */}
         {/* Example: <Tooltip content="Detailed hint"><Icon/></Tooltip> */}
-        {hint &&
+        {React.isValidElement(hint) &&
           React.cloneElement(hint, {
             // If hint is purely informational text, it should be linked via descriptionProps from useTextField
             // For interactive hints (e.g., icon opening a tooltip), ensure it's keyboard accessible and properly labelled.

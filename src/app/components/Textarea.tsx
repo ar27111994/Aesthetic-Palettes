@@ -1,6 +1,6 @@
 "use client";
 
-import React, { forwardRef, useRef } from "react";
+import React, { forwardRef, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl"; // Import useTranslations
 import { cn } from "@utils/cn";
 import { AriaTextFieldOptions, useTextField } from "react-aria";
@@ -86,7 +86,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     // If a forwardedRef exists, assign the localRef's current value to it.
     // This is a common pattern if the parent needs access to the DOM element.
-    React.useEffect(() => {
+    useEffect(() => {
       if (forwardedRef) {
         if (typeof forwardedRef === "function") {
           forwardedRef(localRef.current);
@@ -114,12 +114,13 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       className,
     );
 
-    // Basic auto-resize logic (can be enhanced with a library or more complex JS)
+    const resize = (el: HTMLTextAreaElement) => {
+      el.style.height = "auto";
+      el.style.height = `${el.scrollHeight}px`;
+    };
+
     const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-      if (autoResize) {
-        event.target.style.height = "auto";
-        event.target.style.height = `${event.target.scrollHeight}px`;
-      }
+      if (autoResize) resize(event.target);
       // Call onChange from inputProps if it exists (handled by useTextField)
       if (inputProps.onChange) {
         inputProps.onChange(event as any); // react-aria's onChange might have a different signature
@@ -129,6 +130,13 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         props.onInput(event);
       }
     };
+
+    // keep in sync when value is controlled
+    useEffect(() => {
+      if (autoResize && localRef.current) {
+        resize(localRef.current);
+      }
+    }, [autoResize, props.value]);
 
     return (
       <div className="w-full">

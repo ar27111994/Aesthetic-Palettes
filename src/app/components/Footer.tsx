@@ -14,6 +14,63 @@ import {
 } from "react-icons/fi";
 import { Tooltip } from "@components/Tooltip"; // Import Tooltip for enhanced accessibility
 
+interface NavLinkItem {
+  href: string;
+  translationKey: string;
+}
+
+interface NavSectionProps {
+  titleKey: string;
+  links: NavLinkItem[];
+  t: (key: string) => string; // Add t function to props
+}
+
+const NavSection: React.FC<NavSectionProps> = ({ titleKey, links, t }) => (
+  <nav aria-labelledby={`${titleKey}-heading`}>
+    <h2 id={`${titleKey}-heading`} className="mb-4 tracking-tight capitalize">
+      {t(titleKey)} {/* Use translation key */}
+    </h2>
+    <ul className="text-text-secondary space-y-2 text-lg font-medium">
+      {links.map((link) => (
+        <li key={link.href}>
+          <Link href={link.href} className="hover:text-primary-action-hover">
+            {t(link.translationKey)} {/* Use translation key */}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  </nav>
+);
+
+interface SocialLinkItem {
+  href: string;
+  translationKey: string;
+  IconComponent: React.ElementType;
+}
+
+interface SocialLinksProps {
+  links: SocialLinkItem[];
+  t: (key: string) => string; // Add t function to props
+}
+
+const SocialLinks: React.FC<SocialLinksProps> = ({ links, t }) => (
+  <div className="mt-4 flex space-x-4 text-2xl md:mt-0">
+    {links.map((link) => (
+      <Tooltip content={t(link.translationKey)} key={link.href}>
+        <Link
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t(link.translationKey)}
+          className="focus-visible:ring-focus-indicator rounded-sm focus-visible:ring-2"
+        >
+          <link.IconComponent className="hover:text-primary-action-hover" />
+        </Link>
+      </Tooltip>
+    ))}
+  </div>
+);
+
 /**
  * Footer component displaying navigation links, social media icons, and copyright information.
  *
@@ -43,195 +100,73 @@ const FooterComponent: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const t = useTranslations("Footer"); // Initialize translations for Footer namespace
 
+  const navSections: Omit<NavSectionProps, "t">[] = [
+    {
+      titleKey: "section.product",
+      links: [
+        { href: "/about", translationKey: "link.about" },
+        { href: "/features", translationKey: "link.features" },
+        { href: "/pricing", translationKey: "link.pricing" },
+        { href: "/blog", translationKey: "link.blog" },
+      ],
+    },
+    {
+      titleKey: "section.community",
+      links: [
+        { href: "/forum", translationKey: "link.forum" },
+        { href: "/report", translationKey: "link.reportContent" },
+        { href: "/users", translationKey: "link.featuredUsers" },
+      ],
+    },
+    {
+      titleKey: "section.resources",
+      links: [
+        { href: "/help", translationKey: "link.help" },
+        { href: "/tutorials", translationKey: "link.tutorial" },
+        { href: "/api", translationKey: "link.apiDocs" },
+        { href: "/accessibility", translationKey: "link.accessibility" },
+        { href: "/docs", translationKey: "link.documentation" },
+        { href: "/roadmap", translationKey: "link.roadmap" },
+        { href: "/design-docs", translationKey: "link.designDocs" },
+        { href: "/developer", translationKey: "link.developerPortal" },
+        { href: "/status", translationKey: "link.statusPage" },
+        { href: "/support", translationKey: "link.support" },
+      ],
+    },
+    {
+      titleKey: "section.legal",
+      links: [
+        { href: "/terms", translationKey: "link.terms" },
+        { href: "/privacy", translationKey: "link.privacy" },
+        { href: "/cookies", translationKey: "link.cookies" },
+        {
+          href: "/cookie-preferences",
+          translationKey: "link.manageCookies",
+        },
+        { href: "/licensing", translationKey: "link.licensing" },
+      ],
+    },
+  ];
+
+  const socialLinks: Omit<SocialLinkItem, "t">[] = [
+    { href: "#", translationKey: "twitter", IconComponent: FiTwitter },
+    { href: "#", translationKey: "facebook", IconComponent: FiFacebook },
+    { href: "#", translationKey: "instagram", IconComponent: FiInstagram },
+    { href: "#", translationKey: "youtube", IconComponent: FiYoutube },
+    { href: "#", translationKey: "github", IconComponent: FiGithub },
+    { href: "#", translationKey: "dribbble", IconComponent: FiDribbble },
+    { href: "#", translationKey: "email", IconComponent: FiMail },
+  ];
+
   return (
     <footer
       role="contentinfo"
       className="bg-background-subtle text-text-heading w-full px-4 pt-12 sm:px-6 lg:px-8"
     >
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 md:grid-cols-4">
-        {/* Product Column - Navigation section for product-related links */}
-        {/* Using <nav> with aria-labelledby for better accessibility and semantic HTML for SEO */}
-        <nav aria-labelledby="product-links-heading">
-          <h2
-            id="product-links-heading"
-            className="mb-4 tracking-tight capitalize"
-          >
-            {t("section.product")} {/* Use translation key */}
-          </h2>
-          <ul className="text-text-secondary space-y-2 text-lg font-medium">
-            <li>
-              <Link href="/about" className="hover:text-primary-action-hover">
-                {t("link.about")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/features"
-                className="hover:text-primary-action-hover"
-              >
-                {t("link.features")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link href="/pricing" className="hover:text-primary-action-hover">
-                {t("link.pricing")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link href="/blog" className="hover:text-primary-action-hover">
-                {t("link.blog")} {/* Use translation key */}
-              </Link>
-            </li>
-          </ul>
-        </nav>
-
-        {/* Community Column - Navigation section for community-related links */}
-        {/* Using <nav> with aria-labelledby for better accessibility */}
-        <nav aria-labelledby="community-links-heading">
-          <h2
-            id="community-links-heading"
-            className="mb-4 tracking-tight capitalize"
-          >
-            {t("section.community")} {/* Use translation key */}
-          </h2>
-          <ul className="text-text-secondary space-y-2 text-lg font-medium">
-            <li>
-              <Link href="/forum" className="hover:text-primary-action-hover">
-                {t("link.forum")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link href="/report" className="hover:text-primary-action-hover">
-                {t("link.reportContent")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link href="/users" className="hover:text-primary-action-hover">
-                {t("link.featuredUsers")} {/* Use translation key */}
-              </Link>
-            </li>
-          </ul>
-        </nav>
-
-        {/* Resources Column - Navigation section for resource-related links */}
-        {/* Using <nav> with aria-labelledby for better accessibility */}
-        <nav aria-labelledby="resources-links-heading">
-          <h2
-            id="resources-links-heading"
-            className="mb-4 tracking-tight capitalize"
-          >
-            {t("section.resources")} {/* Use translation key */}
-          </h2>
-          <ul className="text-text-secondary space-y-2 text-lg font-medium">
-            <li>
-              <Link href="/help" className="hover:text-primary-action-hover">
-                {t("link.help")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/tutorials"
-                className="hover:text-primary-action-hover"
-              >
-                {t("link.tutorial")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link href="/api" className="hover:text-primary-action-hover">
-                {t("link.apiDocs")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/accessibility"
-                className="hover:text-primary-action-hover"
-              >
-                {t("link.accessibility")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link href="/docs" className="hover:text-primary-action-hover">
-                {t("link.documentation")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link href="/roadmap" className="hover:text-primary-action-hover">
-                {t("link.roadmap")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/design-docs"
-                className="hover:text-primary-action-hover"
-              >
-                {t("link.designDocs")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/developer"
-                className="hover:text-primary-action-hover"
-              >
-                {t("link.developerPortal")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link href="/status" className="hover:text-primary-action-hover">
-                {t("link.statusPage")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link href="/support" className="hover:text-primary-action-hover">
-                {t("link.support")} {/* Use translation key */}
-              </Link>
-            </li>
-          </ul>
-        </nav>
-
-        {/* Legal Column - Navigation section for legal-related links */}
-        {/* Using <nav> with aria-labelledby for better accessibility */}
-        <nav aria-labelledby="legal-links-heading">
-          <h2
-            id="legal-links-heading"
-            className="mb-4 tracking-tight capitalize"
-          >
-            {t("section.legal")} {/* Use translation key */}
-          </h2>
-          <ul className="text-text-secondary space-y-2 text-lg font-medium">
-            <li>
-              <Link href="/terms" className="hover:text-primary-action-hover">
-                {t("link.terms")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link href="/privacy" className="hover:text-primary-action-hover">
-                {t("link.privacy")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link href="/cookies" className="hover:text-primary-action-hover">
-                {t("link.cookies")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              {/* TODO: Link this to the cookie preferences modal/manager */}
-              <Link
-                href="/cookie-preferences" // Placeholder link
-                className="hover:text-primary-action-hover"
-              >
-                {t("link.manageCookies")} {/* Use translation key */}
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/licensing"
-                className="hover:text-primary-action-hover"
-              >
-                {t("link.licensing")} {/* Use translation key */}
-              </Link>
-            </li>
-          </ul>
-        </nav>
+        {navSections.map((section) => (
+          <NavSection key={section.titleKey} {...section} t={t} />
+        ))}
       </div>
 
       {/* Social Media & Copyright */}
@@ -243,71 +178,7 @@ const FooterComponent: React.FC = () => {
         {/* Social Media Icons - Enhanced with Tooltips for better accessibility and user experience */}
         {/* Ensure these links have `rel="noopener noreferrer"` if they open in a new tab, though Next.js Link handles this well for external URLs. */}
         {/* WCAG Contrast: Verify icon colors against background meet AA/AAA. Hover/focus states should also maintain contrast. */}
-        <div className="mt-4 flex space-x-4 text-2xl md:mt-0">
-          <Tooltip content={t("twitter")}>
-            <Link
-              href="#"
-              aria-label={t("twitter")}
-              className="focus-visible:ring-primary-focus-ring rounded-sm focus-visible:ring-2"
-            >
-              <FiTwitter className="hover:text-primary-action-hover" />
-            </Link>
-          </Tooltip>
-          <Tooltip content={t("facebook")}>
-            <Link
-              href="#"
-              aria-label={t("facebook")}
-              className="focus-visible:ring-primary-focus-ring rounded-sm focus-visible:ring-2"
-            >
-              <FiFacebook className="hover:text-primary-action-hover" />
-            </Link>
-          </Tooltip>
-          <Tooltip content={t("instagram")}>
-            <Link
-              href="#"
-              aria-label={t("instagram")}
-              className="focus-visible:ring-primary-focus-ring rounded-sm focus-visible:ring-2"
-            >
-              <FiInstagram className="hover:text-primary-action-hover" />
-            </Link>
-          </Tooltip>
-          <Tooltip content={t("youtube")}>
-            <Link
-              href="#"
-              aria-label={t("youtube")}
-              className="focus-visible:ring-primary-focus-ring rounded-sm focus-visible:ring-2"
-            >
-              <FiYoutube className="hover:text-primary-action-hover" />
-            </Link>
-          </Tooltip>
-          <Tooltip content={t("github")}>
-            <Link
-              href="#"
-              aria-label={t("github")}
-              className="focus-visible:ring-primary-focus-ring rounded-sm focus-visible:ring-2"
-            >
-              <FiGithub className="hover:text-primary-action-hover" />
-            </Link>
-          </Tooltip>
-          <Tooltip content={t("dribble")}>
-            <Link
-              href="#"
-              aria-label={t("dribble")}
-              className="focus-visible:ring-primary-focus-ring rounded-sm focus-visible:ring-2"
-            >
-              <FiDribbble className="hover:text-primary-action-hover" />
-            </Link>
-          </Tooltip>
-          <Tooltip content={t("email")}>
-            <Link
-              href="#"
-              aria-label={t("email")}
-              className="focus-visible:ring-primary-focus-ring rounded-sm focus-visible:ring-2"
-            >
-              <FiMail className="hover:text-primary-action-hover" />
-            </Link>
-          </Tooltip>
-        </div>
+        <SocialLinks links={socialLinks} t={t} />
         {/* Performance: FooterComponent is wrapped with React.memo to prevent unnecessary re-renders. */}
         {/* Next.js PPR: This component uses "use client" for translations. Ensure that any data fetching or heavy computation is minimized for fast initial load. */}
         {/* Mobile-First: Layout adjusts using Tailwind's responsive prefixes (e.g., md:grid-cols-4, md:flex-row). Test thoroughly on various devices. */}

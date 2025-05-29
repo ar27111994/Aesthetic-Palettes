@@ -105,7 +105,7 @@
     "instagram": "Follow us on Instagram",
     "youtube": "Follow us on YouTube",
     "github": "Star us on GitHub",
-    "dribble": "Follow us on Dribbble",
+    "dribbble": "Follow us on Dribbble",
     "email": "Contact us via email"
   },
   "Forms": {
@@ -137,7 +137,8 @@
     "copySuccess": "Copied {format}: {value}",
     "copyFormat": "Copy {format} value to clipboard",
     "colorOptionsLabel": "Color options",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "copyError": "Error copying value to clipboard"
   },
   "Slider": {
     "thumbAriaLabel": "Slider handle {index}",

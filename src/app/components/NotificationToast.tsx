@@ -13,9 +13,8 @@ import { cn } from "@utils/cn";
 import { useTranslations } from "next-intl"; // Import useTranslations
 import { Button } from "@components/Button";
 import hotToast, {
-  Renderable,
-  Toast,
   resolveValue,
+  type Renderable,
   type Toast as RHTToast,
 } from "react-hot-toast"; // Import react-hot-toast
 
@@ -57,25 +56,28 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   message,
   className,
 }) => {
-  const Icon = icons[type];
   const t = useTranslations("Common"); // Initialize translations
-  const toastType = (t: Toast) => {
-    return t.type === "error"
-      ? "error"
-      : t.type === "success"
-        ? "success"
-        : "info";
+  const toastType = (t: RHTToast): NotificationType => {
+    switch (t.type) {
+      case "error":
+        return "error";
+      case "success":
+        return "success";
+      default:
+        return "info";
+    }
   };
-  type = type || toastType(toast);
-  title = title || t(`notification.${type}`);
-  message = message || resolveValue(toast.message, toast);
+  const derivedType = type ?? toastType(toast);
+  const derivedTitle = title ?? t(`notification.${derivedType}`);
+  const derivedMessage = message ?? resolveValue(toast.message, toast);
+  const Icon = icons[derivedType];
 
   const handleDismiss = () => {
     hotToast.dismiss(toast.id);
   };
 
   const getLiveRegionProps = () => {
-    switch (type) {
+    switch (derivedType) {
       case "error":
       case "warning":
         return { role: "alert", "aria-live": "assertive" as "assertive" };
@@ -103,22 +105,24 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
         className={cn(
           "bg-background-page ring-opacity-5 pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg shadow-lg ring-1 ring-black", // Use background-page
           className,
-          typeClasses[type], // Apply type-specific background/text tint
+          typeClasses[derivedType], // Apply type-specific background/text tint
         )}
       >
         <div className="p-4">
           <div className="flex items-start">
             <div className="flex-shrink-0">
               <Icon
-                className={cn("h-6 w-6", iconClasses[type])}
+                className={cn("h-6 w-6", iconClasses[derivedType])}
                 aria-hidden="true"
               />
             </div>
             <div className="ml-3 w-0 flex-1 pt-0.5">
-              <p className="text-text-heading text-sm font-medium">{title}</p>
+              <p className="text-text-heading text-sm font-medium">
+                {derivedTitle}
+              </p>
               {/* Use text-heading */}
-              {message && (
-                <p className="mt-1 text-sm">{message}</p> // Use text-body
+              {derivedMessage && (
+                <p className="mt-1 text-sm">{derivedMessage}</p> // Use text-body
               )}
             </div>
             <div className="ml-4 flex flex-shrink-0">

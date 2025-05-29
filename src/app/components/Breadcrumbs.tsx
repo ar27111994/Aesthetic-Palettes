@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link"; // Assuming Next.js for routing
 import { FiChevronRight } from "react-icons/fi";
 import { cn } from "@utils/cn";
@@ -35,10 +35,8 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
   }
 
   // Prepare JSON-LD structured data for SEO
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index): JsonLdListItem => {
+  const jsonLd = useMemo(() => {
+    const itemListElement = items.map((item, index): JsonLdListItem => {
       const listItem: JsonLdListItem = {
         "@type": "ListItem",
         position: index + 1,
@@ -53,8 +51,14 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
       // 'item' for the current page (last item, no distinct href) will be undefined here by default.
       // The logic below ensures it's explicitly removed if it somehow got set.
       return listItem;
-    }),
-  };
+    });
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement,
+    };
+  }, [items, baseUrl]);
 
   // Ensure the 'item' property (URL) is omitted for the last breadcrumb if it represents the current page.
   if (jsonLd.itemListElement.length > 0) {
@@ -101,7 +105,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
       >
         <ol className="flex items-center space-x-1 md:space-x-2">
           {items.map((item, index) => {
-            item.href = item.href || "#";
+            const href = item.href ?? "#";
             return (
               <li key={index} className="inline-flex items-center">
                 {index > 0 && (
@@ -111,7 +115,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
                   />
                 )}
                 {index < items.length - 1 ? (
-                  <Link href={item.href} legacyBehavior>
+                  <Link href={href} passHref>
                     <a
                       className="focus-visible:ring-ring truncate rounded hover:underline focus:outline-none focus-visible:ring-1"
                       title={item.label} // Basic tooltip for truncated text

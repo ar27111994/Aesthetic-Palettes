@@ -46,19 +46,22 @@ const PaletteCard: React.FC<PaletteCardProps> = ({
   const t = useTranslations("PaletteCard");
 
   const handleLike = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     onLikeToggle?.(palette.id, !palette.isLikedByUser);
   };
 
   const handleSave = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     onSaveToggle?.(palette.id, !palette.isSavedByUser);
   };
 
   const handleCopy = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     onCopyLink?.(palette.id);
-    toast.success(t("linkCopiedToast")); // Replaced console.log with toast notification
+    toast.success(t("linkCopiedToast"));
   };
 
   const paletteUrl = `/palettes/${palette.id}`;
@@ -114,7 +117,7 @@ const PaletteCard: React.FC<PaletteCardProps> = ({
           onClick={(e) => e.stopPropagation()}
           className="text-text-secondary hover:text-primary-action focus-visible:ring-focus-indicator rounded text-xs hover:underline focus:outline-none focus-visible:ring-1"
           aria-label={t("viewCreatorProfileAriaLabel", {
-            creator: palette.creatorUsername,
+            creatorUsername: palette.creatorUsername,
           })}
         >
           {t("creatorPrefix")} {palette.creatorUsername}

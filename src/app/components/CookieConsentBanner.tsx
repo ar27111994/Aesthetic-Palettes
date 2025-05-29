@@ -6,15 +6,21 @@ import { Button } from "@components/Button"; // Assuming a Button component exis
 import { useTranslations } from "next-intl"; // Import useTranslations
 import { ToggleSwitch } from "@components/ToggleSwitch"; // Assuming a ToggleSwitch component exists
 import { Modal } from "@components/Modal"; // Import the shared Modal component
+import toast from "react-hot-toast";
 
 const COOKIE_CONSENT_KEY = "aesthetic_palettes_cookie_consent";
 
-// TODO: Define specific types for cookie preferences if they become more granular
-// interface CookiePreferences {
-//   analytics: boolean;
-//   marketing: boolean;
-//   // etc.
-// }
+interface CookiePreferences {
+  essential: boolean; // Always true
+  analytics: boolean;
+  marketing: boolean;
+}
+
+const DEFAULT_PREFERENCES: CookiePreferences = {
+  essential: true,
+  analytics: false,
+  marketing: false,
+};
 
 type ConsentStatus = "accepted" | "rejected" | "pending";
 
@@ -22,6 +28,35 @@ const CookieConsentBanner: React.FC = () => {
   const [consentStatus, setConsentStatus] = useState<ConsentStatus>("pending");
   const [isPreferencesModalOpen, setIsPreferencesModalOpen] = useState(false);
   const t = useTranslations("CookieConsent"); // Initialize translations
+  // Add state for cookie preferences
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+  const [marketingEnabled, setMarketingEnabled] = useState(false);
+
+  // Initialize preferences from localStorage
+  useEffect(() => {
+    const storedConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
+    if (
+      storedConsent &&
+      storedConsent !== "rejected" &&
+      storedConsent !== "pending"
+    ) {
+      try {
+        const preferences = JSON.parse(storedConsent);
+        setAnalyticsEnabled(
+          preferences.analytics || DEFAULT_PREFERENCES.analytics,
+        );
+        setMarketingEnabled(
+          preferences.marketing || DEFAULT_PREFERENCES.marketing,
+        );
+      } catch {
+        // Handle legacy string values
+        if (storedConsent === "accepted") {
+          setAnalyticsEnabled(true);
+          setMarketingEnabled(true);
+        }
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const storedConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
@@ -36,31 +71,47 @@ const CookieConsentBanner: React.FC = () => {
   }, []);
 
   const handleAcceptAll = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
+    const preferences: CookiePreferences = {
+      essential: true,
+      analytics: true,
+      marketing: true,
+    };
+
+    localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(preferences));
     setConsentStatus("accepted");
-    // Add logic here to enable analytics/marketing cookies if needed
-    // Consider using react-hot-toast for a non-intrusive confirmation message.
-    // e.g., toast.success(t("preferencesSaved"));
+    setIsPreferencesModalOpen(false);
+    // Show confirmation
+    toast.success(t("preferencesSaved"));
+  };
+
+  const handleSavePreferences = () => {
+    const preferences: CookiePreferences = {
+      essential: true,
+      analytics: analyticsEnabled,
+      marketing: marketingEnabled,
+    };
+
+    localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(preferences));
+    setConsentStatus("accepted");
+    setIsPreferencesModalOpen(false);
+
+    // Apply the preferences
+    if (!preferences.analytics) {
+      // Disable analytics cookies/scripts
+    }
+    if (!preferences.marketing) {
+      // Disable marketing cookies/scripts
+    }
+
+    // Show confirmation
+    toast.success(t("preferencesSaved"));
   };
 
   const handleRejectNonEssential = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, "rejected");
-    setConsentStatus("rejected");
-    // Add logic here to disable non-essential cookies
-    // Consider using react-hot-toast for a non-intrusive confirmation message.
-  };
+    setAnalyticsEnabled(DEFAULT_PREFERENCES.analytics);
+    setMarketingEnabled(DEFAULT_PREFERENCES.marketing);
 
-  const handleSavePreferences = (preferences: any) => {
-    // Logic to save specific preferences (e.g., analytics only)
-    // TODO: Implement actual cookie management
-    console.log("Saving cookie preferences:", preferences);
-    // For now, let's treat saving preferences as accepting essential + chosen
-    // This needs more detailed implementation based on actual categories
-    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted"); // Simplified for now
-    setConsentStatus("accepted");
-    setIsPreferencesModalOpen(false);
-    // Consider using react-hot-toast for a non-intrusive confirmation message.
-    // e.g., toast.success(t("preferencesSaved"));
+    handleSavePreferences();
   };
 
   const openPreferencesModal = () => setIsPreferencesModalOpen(true);
@@ -132,10 +183,10 @@ const CookieConsentBanner: React.FC = () => {
             <Button onClick={handleSavePreferences} variant="primary">
               {t("savePreferencesButton")} {/* Use translation key */}
             </Button>
-            <Button onClick={handleAcceptAll} variant="secondary">
+            <Button onClick={handleAcceptAll} variant="tertiary">
               {t("acceptAllButton")} {/* Use translation key */}
             </Button>
-            <Button onClick={closePreferencesModal} variant="tertiary">
+            <Button onClick={closePreferencesModal} variant="destructive">
               {t("cancelButton")} {/* Use translation key */}
             </Button>
           </div>
@@ -172,12 +223,9 @@ const CookieConsentBanner: React.FC = () => {
                 {t("analyticsCookiesLabel")}
                 {/* Use translation key */}
               </label>
-              {/* TODO: Implement state management for this toggle. onChange should update a state variable. */}
               <ToggleSwitch
-                enabled={true} // TODO: This should be driven by state.
-                onChange={(_enabled) => {
-                  /* TODO: Update analytics preference state */
-                }}
+                enabled={analyticsEnabled}
+                onChange={setAnalyticsEnabled}
                 label={t("analyticsCookiesLabel")}
                 aria-label={t("analyticsCookiesLabel")}
                 id="analytics-cookies"
@@ -189,12 +237,9 @@ const CookieConsentBanner: React.FC = () => {
                 {t("marketingCookiesLabel")}
                 {/* Use translation key */}
               </label>
-              {/* TODO: Implement state management for this toggle. onChange should update a state variable. */}
               <ToggleSwitch
-                enabled={false} // TODO: This should be driven by state.
-                onChange={(_enabled) => {
-                  /* TODO: Update marketing preference state */
-                }}
+                enabled={marketingEnabled}
+                onChange={setMarketingEnabled}
                 label={t("marketingCookiesLabel")}
                 aria-label={t("marketingCookiesLabel")}
                 id="marketing-cookies"

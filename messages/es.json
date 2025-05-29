@@ -105,7 +105,7 @@
     "instagram": "Síguenos en Instagram",
     "youtube": "Síguenos en YouTube",
     "github": "Dale una estrella en GitHub",
-    "dribble": "Síguenos en Dribbble",
+    "dribbble": "Síguenos en Dribbble",
     "email": "Contáctanos por correo electrónico"
   },
   "Forms": {
@@ -137,7 +137,8 @@
     "copySuccess": "Copiado {format}: {value}",
     "copyFormat": "Copiar el valor de {format} al portapapeles",
     "colorOptionsLabel": "Opciones de color",
-    "viewDetails": "Ver Detalles"
+    "viewDetails": "Ver Detalles",
+    "copyError": "Error al copiar el valor al portapapeles"
   },
   "Slider": {
     "thumbAriaLabel": "Slider handle {index}",

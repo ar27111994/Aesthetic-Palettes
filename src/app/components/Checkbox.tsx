@@ -1,6 +1,6 @@
 "use client";
 
-import React, { forwardRef, useId, useRef } from "react";
+import React, { forwardRef, useEffect, useId, useRef } from "react";
 import { cn } from "@utils/cn";
 import { useTranslations } from "next-intl";
 import { useCheckbox } from "@react-aria/checkbox";
@@ -42,17 +42,24 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     const t = useTranslations("Forms");
 
     // Use a local ref for react-aria if an external ref is not provided
-    const localRef = useRef<HTMLInputElement>(null);
-    const inputRef = ref || localRef;
-
     // React Aria state and checkbox hooks
     // Pass all props to useToggleState and useCheckbox, including `isRequired` if needed.
     const state = useToggleState(props);
-    const { inputProps } = useCheckbox(
-      props,
-      state,
-      inputRef as React.RefObject<HTMLInputElement>,
-    ); // Cast ref type
+    const localRef = useRef<HTMLInputElement>(null);
+    const inputRef = localRef; // always an object ref for react-aria
+    const { inputProps } = useCheckbox(props, state, inputRef);
+
+    // Forward the DOM node to the consumer’s ref (object or callback)
+    useEffect(() => {
+      if (!ref) return;
+      if (typeof ref === "function") {
+        ref(inputRef.current);
+      } else {
+        (ref as React.RefObject<HTMLInputElement | null>).current =
+          inputRef.current;
+      }
+      // `inputRef` itself is stable – only ref identity changes matter.
+    }, [ref]);
 
     const labelClasses = cn("text-sm font-medium select-none", {
       // `select-none` to prevent text selection on click
@@ -80,7 +87,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             id={checkboxId} // Ensure ID is applied for label association if not handled by inputProps
             ref={inputRef}
             className={checkboxClasses}
-            aria-invalid={!!error || inputProps["aria-invalid"]} // Combine error state
+            aria-invalid={Boolean(error) || Boolean(inputProps["aria-invalid"])} // Combine error state
             aria-describedby={errorId || inputProps["aria-describedby"]}
             // `required` is handled by `isRequired` in inputProps
           />

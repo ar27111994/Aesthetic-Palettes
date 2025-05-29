@@ -176,7 +176,7 @@ const HeaderComponent: React.FC = () => {
 
   // Focus the search input when it is expanded
   useEffect(() => {
-    let timerId: NodeJS.Timeout;
+    let timerId: NodeJS.Timeout | undefined;
     if (isSearchExpanded && searchRef.current) {
       // Using requestAnimationFrame for smoother focus after layout changes
       timerId = setTimeout(() =>
@@ -185,7 +185,7 @@ const HeaderComponent: React.FC = () => {
         }),
       );
     }
-    return () => clearTimeout(timerId); // Clear timeout if component unmounts or effect re-runs
+    return () => timerId && clearTimeout(timerId); // Clear timeout if component unmounts or effect re-runs
   }, [isSearchExpanded]);
 
   // Focus the mobile search input when menu is opened
@@ -291,19 +291,16 @@ const HeaderComponent: React.FC = () => {
 
   const renderUserActions = useCallback(
     (isMobile = false) => {
-      const menuItemsForUser = useMemo(
-        () => [
-          ...userMenuItems,
-          { isSeparator: true },
-          {
-            label: t("auth.logout"),
-            onClick: logout,
-            isButton: true,
-            icon: FiLogOut,
-          },
-        ],
-        [userMenuItems, t, logout],
-      );
+      const menuItemsForUser = [
+        ...userMenuItems,
+        { isSeparator: true },
+        {
+          label: t("auth.logout"),
+          onClick: logout,
+          isButton: true,
+          icon: FiLogOut,
+        },
+      ];
 
       return (
         <div
@@ -585,7 +582,7 @@ const HeaderComponent: React.FC = () => {
                   isMobileMenuOpen,
                 "hover:text-primary-action-hover": !isMobileMenuOpen,
               })}
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={handleMobileMenuToggle}
               aria-controls="mobile-menu-drawer" // Link button to the drawer
               aria-expanded={isMobileMenuOpen}
               aria-label={t("toggleMobileMenu")}

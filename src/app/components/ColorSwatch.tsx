@@ -100,7 +100,7 @@ const ColorSwatchComponent: React.FC<ColorSwatchProps> = ({
     cursor: isLocked ? "default" : isDragging ? "grabbing" : "grab",
   };
 
-  const handleCopy = (format: "hex" | "rgb" | "hsl" | "cmyk") => {
+  const handleCopy = async (format: "hex" | "rgb" | "hsl" | "cmyk") => {
     let valueToCopy = "";
     let message = "";
     switch (format) {
@@ -123,8 +123,13 @@ const ColorSwatchComponent: React.FC<ColorSwatchProps> = ({
         valueToCopy = hexValue;
         message = t("copySuccess", { format: "HEX", value: valueToCopy });
     }
-    copyToClipboard(valueToCopy);
-    toast.success(message); // Use react-hot-toast
+
+    try {
+      await copyToClipboard(valueToCopy);
+      toast.success(message);
+    } catch {
+      toast.error(t("copyError")); // added i18n key
+    }
   };
 
   const _handleViewDetailsClick = () => {
@@ -172,7 +177,9 @@ const ColorSwatchComponent: React.FC<ColorSwatchProps> = ({
     >
       <div
         {...listeners}
-        className="absolute inset-0"
+        className={cn("absolute inset-0", {
+          "pointer-events-none": !listeners?.onPointerDown,
+        })}
         style={{
           cursor: isLocked ? "default" : isDragging ? "grabbing" : "grab",
         }}
@@ -185,7 +192,7 @@ const ColorSwatchComponent: React.FC<ColorSwatchProps> = ({
       <div
         className={cn(
           "bg-overlay-dark-alpha-30 pointer-events-none absolute inset-0 flex flex-col items-center justify-center opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none",
-          { p1: viewMode === "compact", p4: viewMode === "full" },
+          { "p-1": viewMode === "compact", "p-4": viewMode === "full" },
         )}
       >
         <Button

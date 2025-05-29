@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRadioGroupState } from "@react-stately/radio";
-import { useRadioGroup, useRadio } from "@react-aria/radio";
+import { useRadioGroup, useRadio, AriaRadioProps } from "@react-aria/radio";
 import { VisuallyHidden } from "@react-aria/visually-hidden"; // Import useVisuallyHidden from React Aria
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
@@ -56,7 +56,7 @@ const RadioOption: React.FC<{
 }> = ({
   option,
   state,
-  // radioGroupProps,
+  radioGroupProps,
   radioVisualClassName,
   radioLabelClassName,
   optionClassName,
@@ -65,13 +65,12 @@ const RadioOption: React.FC<{
   // Configure useRadio with only the props it expects (AriaRadioProps)
   const { inputProps: hookInputProps, labelProps } = useRadio(
     {
-      // ...radioGroupProps, // This line remains commented out as per previous fixes
-      // Removed spread of option.inputProps from here, as they are for the HTML input element itself
+      ...option.inputProps, // forwards disabled, aria-* etc.
       children: option.label,
       value: option.value,
       // If your RadioButtonOption can be disabled, you would pass it here, e.g.:
       // isDisabled: option.isDisabled
-    },
+    } as AriaRadioProps,
     state,
     ref,
   );
