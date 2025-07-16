@@ -9,7 +9,7 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "bundler", // Changed from node to bundler
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -19,6 +19,11 @@
         "name": "next"
       }
     ],
+    "types": ["node", "jest", "@testing-library/jest-dom"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
     "baseUrl": "src/",
     "paths": {
       "@public/*": ["../public/*"],
@@ -27,7 +32,7 @@
       "@i18n/*": ["./i18n/*"],
       "@components/*": ["./app/components/*"],
       "@styles/*": ["./app/styles/*"],
-      "@generator/*": ["./app/generator/*"],
+      "@palettes/*": ["./app/palettes/*"],
       "@context/*": ["./lib/context/*"],
       "@hooks/*": ["./lib/hooks/*"],
       "@utils/*": ["./lib/utils/*"],
@@ -35,6 +40,15 @@
       "@features/*": ["./lib/features/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
   "exclude": ["node_modules"]
 }

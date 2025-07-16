@@ -1,4 +1,4 @@
-// app/generator/page.tsx
+// app/palettes/[id]/page.tsx
 "use client";
 
 import React from "react";
@@ -10,20 +10,23 @@ import {
   DragEndEvent,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-
 import { usePaletteManagement } from "@hooks/usePaletteManagement";
 import { useFullscreenOnViewModeToggle } from "@hooks/useFullscreenOnViewModeToggle";
-import { PaletteDisplay } from "@generator/components/PaletteDisplay";
-import { PaletteControls } from "@generator/components/PaletteControls";
+import { PaletteDisplay } from "@palettes/[id]/components/PaletteDisplay";
+import { PaletteControls } from "@palettes/[id]/components/PaletteControls";
+import { MinPaletteSize, MaxPaletteSize } from "@typings/PaletteState";
 
-// Main Page Component
+/**
+ * PaletteGeneratorPage component renders the main palette generator interface.
+ * It manages palette state, drag-and-drop functionality, and integrates fullscreen toggling.
+ * @component
+ * @returns {JSX.Element} The rendered PaletteGeneratorPage component.
+ */
 const PaletteGeneratorPage: React.FC = () => {
-  // Use custom hook for palette state and actions
   const {
     items,
     lockedIndices,
     layout,
-    // viewMode, // viewMode is used by useFullscreenOnViewModeToggle, not directly here
     past,
     future,
     paletteSize,
@@ -37,70 +40,87 @@ const PaletteGeneratorPage: React.FC = () => {
   } = usePaletteManagement();
 
   // Initialize fullscreen toggle hook
-  // This hook internally listens for 'palette/toggleViewMode' action
   useFullscreenOnViewModeToggle();
 
   // Dnd-kit setup: Sensors for input methods
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 8 },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
 
-  // Drag end handler for reordering palette items
-  function handleDragEnd(event: DragEndEvent) {
+  // Handle drag end for reordering palette items
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (active.id !== over?.id && over?.id) {
-      // Ensure over.id is not null
       const oldIndex = items.findIndex((item) => item.id === active.id);
       const newIndex = items.findIndex((item) => item.id === over.id);
 
       if (oldIndex !== -1 && newIndex !== -1) {
-        // Dispatch the reorderPalette action with old and new indices
         dispatchReorderPalette({ oldIndex, newIndex });
       }
     }
-  }
+  };
 
-  // Placeholder handler for adjusting a color
+  // Handle color adjustment
   const handleAdjust = (color: string) => {
-    console.log("Adjust color:", color);
-    // TODO: Open adjustment modal
+    // TODO: Implement adjustment modal with color picker
   };
 
-  // --- Placeholder handlers for "More Options" items ---
-  // These remain in the page component as they might trigger UI changes (modals, etc.)
-  // specific to this page's context.
-  const handleGenerateFromImage = () => console.log("Open Image Upload Modal");
-  const handleGenerateWithAI = () => console.log("Open AI Prompt Modal");
-  const handleApplyHarmonyRule = () =>
-    console.log("Open Color Harmony Rules Modal");
-  const handleViewShadesTints = () => console.log("Open Shades/Tints Modal");
-  const handleCreateGradient = () =>
-    console.log("Open Gradient Generator Modal");
+  // Handlers for "More Options" items
+  const handleGenerateFromImage = () => {
+    // TODO: Implement image upload modal for palette generation
+  };
+
+  const handleGenerateWithAI = () => {
+    // TODO: Implement AI prompt modal for palette generation
+  };
+
+  const handleApplyHarmonyRule = () => {
+    // TODO: Implement color harmony rules modal
+  };
+
+  const handleViewShadesTints = () => {
+    // TODO: Implement shades/tints modal
+  };
+
+  const handleCreateGradient = () => {
+    // TODO: Implement gradient generator modal
+  };
+
   const handleSave = () => {
-    console.log("Open Save Palette modal");
-    // TODO: Implement Save modal (requires login)
+    // TODO: Implement save palette modal (requires authentication)
   };
+
   const handleExport = () => {
-    console.log("Open Export Palette modal");
-    // TODO: Implement Export modal
+    // TODO: Implement export palette modal
   };
+
   const handleViewOptions = () => {
-    console.log("Open View Options from menu item"); // This is for the menu item
-    // TODO: Implement view options toggle or modal if different from the dedicated ViewOptions component
+    // TODO: Implement view options modal or toggle
   };
+
   const handleAccessibilityTools = () => {
-    console.log("Open Accessibility Tools modal");
-    // TODO: Implement Accessibility modal
+    // TODO: Implement accessibility tools modal
   };
-  // --- End of Placeholder Handlers ---
+
+  // Validate and dispatch palette size changes
+  const handleSizeChange = (newSize: number) => {
+    if (newSize >= MinPaletteSize && newSize <= MaxPaletteSize) {
+      dispatchSetPaletteSize(newSize);
+    }
+  };
 
   return (
-    <div className="flex h-screen flex-col">
-      {/* Main Palette Area */}
+    <div
+      className="flex h-screen flex-col"
+      role="main"
+      aria-label="Palette Generator"
+    >
       <PaletteDisplay
         items={items}
         layout={layout}
@@ -108,11 +128,9 @@ const PaletteGeneratorPage: React.FC = () => {
         sensors={sensors}
         onDragEnd={handleDragEnd}
         onLockToggle={dispatchToggleLock}
-        onAdjust={handleAdjust} // Keep original non-dispatch handler
+        onAdjust={handleAdjust}
         onDelete={dispatchDeleteColor}
       />
-
-      {/* Global Controls Bar */}
       <PaletteControls
         onGenerate={dispatchGenerate}
         onUndo={dispatchUndo}
@@ -120,8 +138,7 @@ const PaletteGeneratorPage: React.FC = () => {
         canUndo={past.length > 0}
         canRedo={future.length > 0}
         paletteSize={paletteSize}
-        onSizeChange={dispatchSetPaletteSize}
-        // Pass down "More Options" handlers
+        onSizeChange={handleSizeChange}
         onGenerateFromImage={handleGenerateFromImage}
         onGenerateWithAI={handleGenerateWithAI}
         onApplyHarmonyRule={handleApplyHarmonyRule}

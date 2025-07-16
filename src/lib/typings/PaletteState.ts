@@ -27,6 +27,7 @@ export const MinPaletteSize = 3;
 export const MaxPaletteSize = 10;
 
 export interface ColorSwatch {
+  id: string;
   value: string;
   contrast: number;
   accessibility: Accessibility;
@@ -41,14 +42,14 @@ export interface PaletteState {
   layout: PaletteLayout;
   status?: PaletteStatus;
   error?: string;
-  past: ColorSwatch[][];
-  future: ColorSwatch[][];
+  past: PaletteState[];
+  future: PaletteState[];
 }
 
 export const initialState: PaletteState = {
   currentPalette: [],
   lockedIndices: [],
-  viewMode: "full",
+  viewMode: "compact",
   layout: "vertical",
   past: [],
   future: [],

@@ -105,11 +105,15 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
         className={cn(
           "bg-background-page ring-opacity-5 pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg shadow-lg ring-1 ring-black", // Use background-page
           className,
-          typeClasses[derivedType], // Apply type-specific background/text tint
         )}
       >
-        <div className="p-4">
-          <div className="flex items-start">
+        <div
+          className={cn(
+            "p-4",
+            typeClasses[derivedType], // Apply type-specific background/text tint
+          )}
+        >
+          <div className="flex items-center">
             <div className="flex-shrink-0">
               <Icon
                 className={cn("h-6 w-6", iconClasses[derivedType])}

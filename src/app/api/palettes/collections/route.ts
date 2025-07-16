@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
  */
 
 // Get all collections for the authenticated user
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
   // Initialize Supabase client
   const supabase = await createClient();
 
@@ -23,12 +23,19 @@ export async function GET(_req: NextRequest) {
       );
     }
 
+    // Get search parameters from URL
+    const url = new URL(req.url);
+    const query = url.searchParams.get("query") || "";
+    const limit = parseInt(url.searchParams.get("limit") || "10", 10);
+    const offset = parseInt(url.searchParams.get("offset") || "0", 10);
     // Get collections from database
     const { data, error } = await supabase
       .from("collections")
       .select("*")
       .eq("user_id", session.user.id)
-      .order("created_at", { ascending: false });
+      .or(`name.ilike.%${query}%, description.ilike.%${query}%`) // Search by name or tags
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
 
     if (error) {
       console.error("Error fetching collections:", error);
@@ -124,7 +131,7 @@ export async function PUT(req: NextRequest) {
     }
 
     // Parse request body
-    const { id, name } = await req.json();
+    const { id, name, description } = await req.json();
 
     // Validate input
     if (!id || !name) {
@@ -159,7 +166,7 @@ export async function PUT(req: NextRequest) {
     // Update collection in database
     const { data, error } = await supabase
       .from("collections")
-      .update({ name })
+      .update({ name, description })
       .eq("id", id)
       .select()
       .single();

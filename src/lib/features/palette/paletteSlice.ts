@@ -10,6 +10,29 @@ import {
 } from "@typings/PaletteState";
 import { generatePalette } from "@utils/color";
 import { createAppSlice } from "@lib/createAppSlice";
+import { WritableDraft } from "immer";
+
+// A simple unique ID generator
+const generateUniqueId = () => {
+  return "_" + Math.random().toString(36).substr(2, 9);
+};
+
+function extractCurrentPalette(
+  state: WritableDraft<PaletteState>,
+): WritableDraft<PaletteState> {
+  const { past, future, ...rest } = state;
+  return rest as WritableDraft<PaletteState>;
+}
+
+const withHistory = <T extends PayloadAction<any>>(
+  reducer: (state: WritableDraft<PaletteState>, action: T) => void,
+) => {
+  return (state: WritableDraft<PaletteState>, action: T) => {
+    state.past.push(extractCurrentPalette(state));
+    state.future = []; // Clear future when a new action is taken
+    reducer(state, action);
+  };
+};
 
 export const generateNewPalette = createAsyncThunk<
   ColorSwatchType[],
@@ -18,182 +41,177 @@ export const generateNewPalette = createAsyncThunk<
 >("palette/generateNewPalette", async (_, { getState }) => {
   const { lockedIndices, currentPalette } = getState().palette as PaletteState;
   const paletteSize = currentPalette.length || DefaultPaletteSize;
-  return generatePalette({ paletteSize, lockedIndices, currentPalette });
+  const newColors = generatePalette({
+    paletteSize,
+    lockedIndices,
+    currentPalette,
+  });
+  return newColors.map((color) => ({ ...color, id: generateUniqueId() }));
 });
 
 const paletteSlice = createAppSlice({
   name: "palette",
   initialState,
   reducers: {
-    toggleViewMode: (state) => {
-      state.viewMode = state.viewMode === "compact" ? "full" : "compact";
-    },
-    toggleLayout: (state) => {
-      state.layout = state.layout === "horizontal" ? "vertical" : "horizontal";
-    },
     undo: (state) => {
       if (state.past.length > 0) {
-        const previous = state.past[state.past.length - 1];
-        state.future = [state.currentPalette, ...state.future];
-        state.currentPalette = previous;
-        state.past = state.past.slice(0, -1);
+        const previousState = state.past.pop()!;
+        state.future.unshift(extractCurrentPalette(state));
+        Object.assign(state, previousState);
       }
     },
     redo: (state) => {
       if (state.future.length > 0) {
-        const next = state.future[0];
-        state.past = [...state.past, state.currentPalette];
-        state.currentPalette = next;
-        state.future = state.future.slice(1);
+        const nextState = state.future.shift()!;
+        state.past.push(extractCurrentPalette(state));
+        Object.assign(state, nextState);
       }
     },
-    setPaletteSize: (state, action: PayloadAction<number>) => {
+    SYNC_BROWSER_FULLSCREEN_STATE: withHistory(
+      (state, action: PayloadAction<{ isFullscreen: boolean }>) => {
+        const targetViewMode = action.payload.isFullscreen ? "full" : "compact";
+        if (state.viewMode !== targetViewMode) {
+          state.viewMode = targetViewMode;
+        }
+      },
+    ),
+    toggleViewMode: withHistory((state) => {
+      state.viewMode = state.viewMode === "compact" ? "full" : "compact";
+    }),
+    toggleLayout: withHistory((state) => {
+      state.layout = state.layout === "horizontal" ? "vertical" : "horizontal";
+    }),
+    setPaletteSize: withHistory((state, action: PayloadAction<number>) => {
       const newSize = action.payload;
-      if (newSize < MinPaletteSize || newSize > MaxPaletteSize) return; // Prevent invalid sizes
+      if (newSize < MinPaletteSize || newSize > MaxPaletteSize) return;
 
       const currentSize = state.currentPalette.length;
 
       if (newSize > currentSize) {
-        // Add new unlocked colors
         const newColors = generatePalette({
           paletteSize: newSize - currentSize,
-          startColor: state.currentPalette[0].value,
-        });
-        state.currentPalette = [...state.currentPalette, ...newColors];
+          startColor: state.currentPalette[0]?.value,
+        }).map((color) => ({ ...color, id: generateUniqueId() }));
+        state.currentPalette.push(...newColors);
       } else if (newSize < currentSize) {
-        // Remove colors beyond new size, preserving locked indices
-        const preservedIndices = state.lockedIndices;
+        const numToRemove = currentSize - newSize;
+        const unlockedIndices = state.currentPalette
+          .map((_, index) => index)
+          .filter((index) => !state.lockedIndices.includes(index));
 
-        const lockedPalette = state.currentPalette
-          .slice(
-            0,
-            newSize > preservedIndices.length
-              ? newSize
-              : preservedIndices.length,
-          )
-          .map((color, index) =>
-            preservedIndices.includes(index) ? color : ({} as ColorSwatchType),
-          );
+        const indicesToRemove = new Set<number>();
 
-        let newPalette = lockedPalette.filter((color) => !color.value);
-        if (newPalette.length) {
-          newPalette = generatePalette({
-            paletteSize: newPalette.length,
-            startColor: newPalette[0].value,
-            endColor: newPalette[newPalette.length - 1].value,
-          });
-
-          state.currentPalette = lockedPalette.map((color) => {
-            if (!color.value) {
-              return newPalette.shift() as ColorSwatchType;
-            }
-            return color;
-          });
+        for (
+          let i = unlockedIndices.length - 1;
+          i >= 0 && indicesToRemove.size < numToRemove;
+          i--
+        ) {
+          indicesToRemove.add(unlockedIndices[i]);
         }
 
-        state.lockedIndices = preservedIndices;
+        if (indicesToRemove.size < numToRemove) {
+          for (
+            let i = currentSize - 1;
+            i >= 0 && indicesToRemove.size < numToRemove;
+            i--
+          ) {
+            if (!indicesToRemove.has(i)) {
+              indicesToRemove.add(i);
+            }
+          }
+        }
+
+        const newPalette: ColorSwatchType[] = [];
+        const newLockedIndices: number[] = [];
+        let newIndex = 0;
+        for (let i = 0; i < state.currentPalette.length; i++) {
+          if (!indicesToRemove.has(i)) {
+            newPalette.push(state.currentPalette[i]);
+            if (state.lockedIndices.includes(i)) {
+              newLockedIndices.push(newIndex);
+            }
+            newIndex++;
+          }
+        }
+
+        state.currentPalette = newPalette;
+        state.lockedIndices = newLockedIndices;
       }
-
-      // Save previous state for undo
-      state.past = [...state.past, state.currentPalette];
-    },
-    setPalette: (state, action: PayloadAction<ColorSwatchType[]>) => {
-      state.currentPalette = action.payload;
-      // Reset locked indices when setting a new palette?
-      // state.lockedIndices = [];
-
-      // Save previous state for undo
-      state.past = [...state.past, state.currentPalette];
-    },
-    toggleLock: (state, action: PayloadAction<string>) => {
+    }),
+    setPalette: withHistory(
+      (state, action: PayloadAction<ColorSwatchType[]>) => {
+        state.currentPalette = action.payload.map((color) => ({
+          ...color,
+          id: color.id || generateUniqueId(),
+        }));
+        state.lockedIndices = [];
+      },
+    ),
+    toggleLock: withHistory((state, action: PayloadAction<string>) => {
       const id = action.payload;
       const index = state.currentPalette.findIndex(
-        (swatch) => swatch.value === id,
+        (swatch) => swatch.id === id,
       );
-      if (index === -1) return; // Color not found
+      if (index === -1) return;
 
       if (state.lockedIndices.includes(index)) {
         state.lockedIndices = state.lockedIndices.filter((i) => i !== index);
       } else {
         state.lockedIndices.push(index);
-        state.lockedIndices.sort((a, b) => a - b); // Keep sorted
+        state.lockedIndices.sort((a, b) => a - b);
       }
-
-      // Save previous state for undo
-      state.past = [...state.past, state.currentPalette];
-    },
-    deleteColor: (state, action: PayloadAction<string>) => {
+    }),
+    deleteColor: withHistory((state, action: PayloadAction<string>) => {
       const idToDelete = action.payload;
       const indexToDelete = state.currentPalette.findIndex(
-        (swatch) => swatch.value === idToDelete,
+        (swatch) => swatch.id === idToDelete,
       );
 
-      if (indexToDelete === -1) return; // Color not found
+      if (indexToDelete === -1) return;
 
       if (state.currentPalette.length > MinPaletteSize) {
-        // Prevent deleting below minSize colors
         state.currentPalette.splice(indexToDelete, 1);
-        // Adjust locked indices after deletion
         state.lockedIndices = state.lockedIndices
-          .map((lockedIndex) => {
-            if (lockedIndex > indexToDelete) {
-              return lockedIndex - 1;
-            }
-            return lockedIndex;
-          })
-          .filter((lockedIndex) => lockedIndex !== indexToDelete); // Ensure deleted index is removed if locked
+          .map((lockedIndex) =>
+            lockedIndex > indexToDelete ? lockedIndex - 1 : lockedIndex,
+          )
+          .filter((lockedIndex) => lockedIndex !== indexToDelete);
       }
+    }),
+    reorderPalette: withHistory(
+      (
+        state,
+        action: PayloadAction<{ oldIndex: number; newIndex: number }>,
+      ) => {
+        const { oldIndex, newIndex } = action.payload;
+        if (oldIndex === newIndex) return;
 
-      // Save previous state for undo
-      state.past = [...state.past, state.currentPalette];
-    },
-    reorderPalette: (
-      state,
-      action: PayloadAction<{ oldIndex: number; newIndex: number }>,
-    ) => {
-      const { oldIndex, newIndex } = action.payload;
-      if (oldIndex === newIndex) return; // No change
+        const palette = state.currentPalette;
+        const [movedItem] = palette.splice(oldIndex, 1);
+        palette.splice(newIndex, 0, movedItem);
 
-      const palette = state.currentPalette;
-      const [movedItem] = palette.splice(oldIndex, 1);
-      palette.splice(newIndex, 0, movedItem);
-
-      // Update locked indices based on the reorder
-      // Note: dragIndex becomes oldIndex, hoverIndex becomes newIndex
-      const dragIndex = oldIndex;
-      const hoverIndex = newIndex;
-
-      // Update locked indices based on the reorder
-      const newLockedIndices: number[] = [];
-      state.lockedIndices.forEach((oldLockedIndex) => {
-        if (oldLockedIndex === dragIndex) {
-          // The dragged item keeps its locked state at the new position
-          newLockedIndices.push(hoverIndex);
-        } else if (dragIndex < hoverIndex) {
-          // Item moved down
-          if (oldLockedIndex > dragIndex && oldLockedIndex <= hoverIndex) {
-            // Items between old and new position shift up
-            newLockedIndices.push(oldLockedIndex - 1);
+        const newLockedIndices: number[] = [];
+        state.lockedIndices.forEach((oldLockedIndex) => {
+          if (oldLockedIndex === oldIndex) {
+            newLockedIndices.push(newIndex);
+          } else if (oldIndex < newIndex) {
+            if (oldLockedIndex > oldIndex && oldLockedIndex <= newIndex) {
+              newLockedIndices.push(oldLockedIndex - 1);
+            } else {
+              newLockedIndices.push(oldLockedIndex);
+            }
           } else {
-            newLockedIndices.push(oldLockedIndex);
+            // oldIndex > newIndex
+            if (oldLockedIndex >= newIndex && oldLockedIndex < oldIndex) {
+              newLockedIndices.push(oldLockedIndex + 1);
+            } else {
+              newLockedIndices.push(oldLockedIndex);
+            }
           }
-        } else {
-          // dragIndex > hoverIndex
-          // Item moved up
-          if (oldLockedIndex >= hoverIndex && oldLockedIndex < dragIndex) {
-            // Items between new and old position shift down
-            newLockedIndices.push(oldLockedIndex + 1);
-          } else {
-            newLockedIndices.push(oldLockedIndex);
-          }
-        }
-      });
-      state.lockedIndices = newLockedIndices.sort((a, b) => a - b); // Keep sorted
-
-      // Save previous state for undo
-      state.past = [...state.past, state.currentPalette];
-    },
-    // Add other reducers like addColor, updateColor, setPaletteSize etc.
+        });
+        state.lockedIndices = newLockedIndices.sort((a, b) => a - b);
+      },
+    ),
   },
   extraReducers: (builder) => {
     builder
@@ -202,12 +220,17 @@ const paletteSlice = createAppSlice({
       })
       .addCase(
         generateNewPalette.fulfilled,
-        (state, action: PayloadAction<ColorSwatchType[]>) => {
+        withHistory((state, action: PayloadAction<ColorSwatchType[]>) => {
           state.status = "idle";
-          state.past = [...state.past, state.currentPalette];
-          state.currentPalette = action.payload;
-          state.future = [];
-        },
+          const newPalette = action.payload;
+          const finalPalette = state.currentPalette.map((oldSwatch, index) => {
+            if (state.lockedIndices.includes(index)) {
+              return oldSwatch;
+            }
+            return newPalette[index];
+          });
+          state.currentPalette = finalPalette;
+        }),
       )
       .addCase(generateNewPalette.rejected, (state, action) => {
         state.status = "failed";

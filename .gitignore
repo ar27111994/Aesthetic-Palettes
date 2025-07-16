@@ -23,18 +23,18 @@ yarn-debug.log*
 yarn-error.log*
 
 # IDE and editor files
-.idea/
-.vscode/
-.trae/
-.clinerules/
-.cursor/
-.windsurf/
+.vscode/*
+.idea/*
+.trae/*
+.qodo/*
+.clinerules/*
+.cursor/*
+.windsurf/*
 *.launch.json
 *.sublime-project
 *.sublime-workspace
 *.code-workspace
 *.vscode/*
-!.vscode/extensions.json
 
 # Misc
 npm-debug.log*

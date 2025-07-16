@@ -21,7 +21,7 @@ export function PalettePreviewContainer({
   return (
     <Link
       target="_blank"
-      href="/generator"
+      href="/palettes/new"
       passHref
       className="animate-fade-in animation-delay-200 group relative flex flex-col items-center justify-center transition-transform duration-500 hover:scale-[1.02] motion-reduce:transition-none"
     >

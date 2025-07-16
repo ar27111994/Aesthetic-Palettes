@@ -146,7 +146,11 @@ const HeaderComponent: React.FC = () => {
 
   const navLinks = useMemo(
     () => [
-      { href: "/generator", label: t("nav.generator"), icon: FiDroplet },
+      {
+        href: "/palettes/new",
+        label: t("nav.generator"),
+        icon: FiDroplet,
+      },
       { href: "/explore", label: t("nav.explore"), icon: FiCompass },
       { href: "/community", label: t("nav.community"), icon: FiUsers },
       { href: "/guides", label: t("nav.guides"), icon: FiBookOpen },

@@ -138,7 +138,9 @@
     "copyFormat": "Copy {format} value to clipboard",
     "colorOptionsLabel": "Color options",
     "viewDetails": "View Details",
-    "copyError": "Error copying value to clipboard"
+    "copyError": "Error copying value to clipboard",
+    "dragDisabledLabel": "Drag disabled",
+    "dragEnabledLabel": "Drag enabled for {color}"
   },
   "Slider": {
     "thumbAriaLabel": "Slider handle {index}",
@@ -202,8 +204,10 @@
     "viewShadesTints": "View Shades/Tints...",
     "createGradient": "Create Gradient...",
     "copy": "Copy Value",
-    "verticalLayout": "Switch to Vertical Layout",
-    "horizontalLayout": "Switch to Horizontal Layout",
+    "switchToVerticalLayout": "Switch to Vertical Layout",
+    "switchToHorizontalLayout": "Switch to Horizontal Layout",
+    "enterFullscreen": "Enter Fullscreen",
+    "exitFullscreen": "Exit Fullscreen",
     "fullView": "Switch to Full View",
     "compactView": "Switch to Compact View",
     "adjust": "Adjust Color",
@@ -250,6 +254,41 @@
     "title": "Start Creating Today",
     "description": "Sign up for a free account to save your palettes, collaborate with others, and access advanced features.",
     "signUpButton": "Create Free Account"
+  },
+  "Fullscreen": {
+    "enter": {
+      "announce": "Entering fullscreen mode",
+      "success": "Entered fullscreen mode",
+      "error": "Error entering fullscreen mode. Please try again."
+    },
+    "exit": {
+      "announce": "Exiting fullscreen mode",
+      "success": "Exited fullscreen mode",
+      "error": "Error exiting fullscreen mode. Please try again."
+    },
+    "minimize": "Minimize",
+    "enterAriaLabel": "Enter fullscreen mode",
+    "exitAriaLabel": "Exit fullscreen mode",
+    "minimizeAriaLabel": "Minimize palette",
+    "notSupported": "Your browser does not support all features required for fullscreen mode. Some functionality may be limited.",
+    "loading": "Loading fullscreen mode...",
+    "fullscreenPalette": "Fullscreen palette",
+    "palette": "Palette"
+  },
+  "PaletteDisplay": {
+    "colorMoved": "Moved color from position {from} to {to}",
+    "fullscreenNotSupported": "Your browser does not support all features required for fullscreen mode. Some functionality may be limited.",
+    "fullscreenPalette": "Fullscreen palette",
+    "palette": "Palette",
+    "colorSwatches": "Color swatches",
+    "colorSwatch": "Color swatch {index}: {hex}",
+    "draggable": "Draggable color swatch",
+    "draggingStarted": "Started dragging {id}",
+    "draggingOver": "Dragging {id} over {overId}",
+    "dragEnded": "Finished dragging {id} to position {overId}",
+    "dragEndedNoTarget": "Finished dragging {id}",
+    "dragCancelled": "Cancelled dragging {id}",
+    "screenReaderDraggable": "To pick up a draggable item, press the space bar. While dragging, use the arrow keys to move the item. Press space again to drop the item in its new position, or press escape to cancel."
   },
   "Testimonials": {
     "title": "What Our Users Say",

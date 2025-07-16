@@ -138,7 +138,9 @@
     "copyFormat": "Copiar el valor de {format} al portapapeles",
     "colorOptionsLabel": "Opciones de color",
     "viewDetails": "Ver Detalles",
-    "copyError": "Error al copiar el valor al portapapeles"
+    "copyError": "Error al copiar el valor al portapapeles",
+    "dragDisabledLabel": "Arrastre deshabilitado",
+    "dragEnabledLabel": "Arrastre habilitado para {color}"
   },
   "Slider": {
     "thumbAriaLabel": "Slider handle {index}",
@@ -221,6 +223,20 @@
     "unsavePaletteAriaLabel": "Dejar de guardar esta paleta",
     "savePaletteAriaLabel": "Guardar esta paleta",
     "copyLinkAriaLabel": "Copiar enlace de la paleta"
+  },
+  "Fullscreen": {
+    "enter": "Pantalla completa",
+    "exit": "Salir de pantalla completa",
+    "minimize": "Minimizar",
+    "enterAriaLabel": "Activar modo de pantalla completa",
+    "exitAriaLabel": "Salir del modo de pantalla completa",
+    "minimizeAriaLabel": "Minimizar paleta",
+    "notSupported": "Su navegador no admite todas las funciones necesarias para el modo de pantalla completa. Es posible que algunas funciones estén limitadas.",
+    "enterError": "Error al activar el modo de pantalla completa. Por favor, inténtelo de nuevo.",
+    "exitError": "Error al salir del modo de pantalla completa. Por favor, inténtelo de nuevo.",
+    "loading": "Cargando modo de pantalla completa...",
+    "fullscreenPalette": "Paleta en pantalla completa",
+    "palette": "Paleta"
   },
   "CookieConsent": {
     "bannerAriaLabel": "Banner de Consentimiento de Cookies",

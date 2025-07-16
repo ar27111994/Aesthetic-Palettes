@@ -28,7 +28,7 @@ export function HeroSection({
           {tHome("heroSubtitle")}
         </p>
         <div className="mb-6 flex flex-col justify-center gap-4 sm:flex-row">
-          <Link href="/generator" passHref>
+          <Link href="/palettes/new" passHref>
             <Button
               variant="primary"
               size="lg"

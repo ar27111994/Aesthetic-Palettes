@@ -94,11 +94,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  // Theme color for browser UI
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" }, // Light theme color
-    { media: "(prefers-color-scheme: dark)", color: "#1a202c" }, // Dark theme color (adjust as needed)
-  ],
   // Verification for search engines (optional)
   // verification: {
   //   google: "your-google-site-verification-code",
@@ -122,7 +117,11 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   // maximumScale intentionally omitted to allow user zoom
-  // themeColor: "#ffffff", // Can also be set here
+  // Theme color for browser UI
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" }, // Light theme color
+    { media: "(prefers-color-scheme: dark)", color: "#1f2937" }, // Dark theme color (adjust as needed)
+  ],
 };
 
 export default async function RootLayout({
@@ -147,7 +146,7 @@ export default async function RootLayout({
           <Suspense
             fallback={
               <LoadingIndicator
-                className="m-auto"
+                className="mx-auto my-auto"
                 key={`${locale}-loader`}
                 size="lg"
               />

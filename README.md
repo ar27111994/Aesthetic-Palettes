@@ -1,9 +1,10 @@
 # Aesthetic Palettes
 
-<div align="center">
-  <img src="public/android-chrome-192x192.png" alt="Aesthetic Palettes Logo" width="120" />
-  <h3>Create, Save, and Share Beautiful Color Palettes</h3>
-  <p>A modern, accessible color palette generator inspired by Coolors.co</p>
+![Aesthetic Palettes Logo](public/android-chrome-192x192.png)
+
+### Create, Save, and Share Beautiful Color Palettes
+
+A modern, accessible color palette generator inspired by Coolors.co
   
   [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
@@ -16,6 +17,7 @@
 ## ✨ Features
 
 - **Intuitive Palette Generator**: Create random color palettes with a single keystroke
+- **Fullscreen Palette Display**: Immersive fullscreen mode for better color visualization and comparison
 - **Advanced Color Manipulation**: Fine-tune colors with HSL, RGB, and other controls
 - **Color Theory Tools**: Generate palettes based on color theory rules (complementary, analogous, etc.)
 - **Accessibility Checker**: Verify color contrast and simulate color blindness
@@ -39,31 +41,32 @@
 
 1. Clone the repository
 
-```bash
-git clone https://github.com/ar27111994/Aesthetic-Palettes.git
-cd Aesthetic-Palettes
-```
+   ```bash
+   git clone https://github.com/ar27111994/Aesthetic-Palettes.git
+   cd Aesthetic-Palettes
+   ```
 
 2. Install dependencies
 
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
 3. Set up environment variables
 
-Create a `.env.local` file in the root directory with the following variables:
+   Create a `.env.local` file in the root directory with the following variables:
 
-```
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   NEXT_PUBLIC_APP_URL=your_app_url
+   ```
 
 4. Start the development server
 
-```bash
-npm run dev
-```
+   ```bash
+   npm run dev
+   ```
 
 The application will be available at `http://localhost:3000`.
 
@@ -92,6 +95,7 @@ Row-level security policies ensure data protection and proper access control.
 
 ## 🧩 Key Components
 
+- **Fullscreen Palette Display**: Immersive view for examining and comparing colors with keyboard navigation and accessibility features
 - **Palette Generator**: Core functionality for creating and manipulating color palettes
 - **Color Manipulation Tools**: Utilities for adjusting and analyzing colors
 - **User Dashboard**: Interface for managing saved palettes and collections

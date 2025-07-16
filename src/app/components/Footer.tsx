@@ -32,7 +32,7 @@ const NavSection: React.FC<NavSectionProps> = ({ titleKey, links, t }) => (
     </h2>
     <ul className="text-text-secondary space-y-2 text-lg font-medium">
       {links.map((link) => (
-        <li key={link.href}>
+        <li key={`${titleKey}${link.href}`}>
           <Link href={link.href} className="hover:text-primary-action-hover">
             {t(link.translationKey)} {/* Use translation key */}
           </Link>
@@ -56,7 +56,7 @@ interface SocialLinksProps {
 const SocialLinks: React.FC<SocialLinksProps> = ({ links, t }) => (
   <div className="mt-4 flex space-x-4 text-2xl md:mt-0">
     {links.map((link) => (
-      <Tooltip content={t(link.translationKey)} key={link.href}>
+      <Tooltip content={t(link.translationKey)} key={link.translationKey}>
         <Link
           href={link.href}
           target="_blank"

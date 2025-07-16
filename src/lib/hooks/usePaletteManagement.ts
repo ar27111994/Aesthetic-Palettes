@@ -17,10 +17,6 @@ import {
 } from "@features/palette/paletteSlice";
 import { useAppDispatch, useAppSelector } from "@hooks/useApp";
 
-export interface MappedPaletteItem extends ColorSwatch {
-  id: string;
-}
-
 export const usePaletteManagement = () => {
   const dispatch = useAppDispatch();
   const { currentPalette, lockedIndices, past, future, layout, viewMode } =
@@ -28,11 +24,7 @@ export const usePaletteManagement = () => {
 
   const paletteSize = currentPalette.length;
 
-  // Map palette items to include a unique ID (using hex value as ID)
-  const items: MappedPaletteItem[] = currentPalette.map((swatch) => ({
-    ...swatch,
-    id: swatch.value,
-  }));
+  const items: ColorSwatch[] = currentPalette;
 
   // Action handlers
   const handleGenerate = () => dispatch(generateNewPalette());
